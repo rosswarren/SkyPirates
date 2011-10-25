@@ -8,14 +8,14 @@ import org.bukkit.block.Block;
 
 public class Directions {
 	public enum CompassDirection {
-		NO_DIRECTION(-1), NORTH(0), NORTH_EAST(1), EAST(2), SOUTH_EAST(3), SOUTH(
-				4), SOUTH_WEST(5), WEST(6), NORTH_WEST(7);
-		@SuppressWarnings("unused")
+		NO_DIRECTION(-1), NORTH(0), NORTH_EAST(1), EAST(2), SOUTH_EAST(3), SOUTH(4), SOUTH_WEST(5), WEST(6), NORTH_WEST(7);
+		
 		private int id;
+		
 		private static Map<Integer, CompassDirection> map;
 
 		private CompassDirection(int id) {
-			this.id = id;
+			this.setId(id);
 			add(id, this);
 		}
 
@@ -111,6 +111,14 @@ public class Directions {
 			}
 
 			return CompassDirection.NO_DIRECTION;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
 		}
 	}
 }

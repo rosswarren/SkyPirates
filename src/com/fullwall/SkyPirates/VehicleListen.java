@@ -12,13 +12,14 @@ import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 
+import com.fullwall.SkyPirates.BoatHandler.Modes;
+
 /**
  * Listener
  * 
  * @author fullwall
  */
 public class VehicleListen extends VehicleListener {
-	@SuppressWarnings("unused")
 	private final SkyPirates plugin;
 	public double fromYaw;
 	public double toYaw;
@@ -31,16 +32,17 @@ public class VehicleListen extends VehicleListener {
 
 	@Override
 	public void onVehicleMove(VehicleMoveEvent event) {
-		if (!(event.getVehicle() instanceof Boat)
-				|| !(event.getVehicle().getPassenger() instanceof Player)) {
+		if (!(event.getVehicle() instanceof Boat) || !(event.getVehicle().getPassenger() instanceof Player)) {
 			super.onVehicleMove(event);
 			return;
 		}
+		
 		Player p = (Player) event.getVehicle().getPassenger();
-		if (!(p.isInsideVehicle()))
-			return;
-		if (!(PlayerListen.checkBoats((Boat) event.getVehicle())))
-			return;
+		
+		if (!(p.isInsideVehicle())) return;
+			
+		
+		if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) return;
 
 		from = event.getFrom();
 		to = event.getTo();
@@ -75,13 +77,12 @@ public class VehicleListen extends VehicleListener {
 		
 		BoatHandler boat;
 
-		if ((SkyPirates.playerModes.get(player) == null))
-			SkyPirates.playerModes.put(player, 0);
+		if ((SkyPirates.playerModes.get(player) == null)) {
+			SkyPirates.playerModes.put(player, Modes.normal);
+		}
 
 		if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) {
-			boat = new BoatHandler((Boat) event.getVehicle(),
-					SkyPirates.playerModes.get(player), event.getVehicle()
-							.getEntityId());
+			boat = new BoatHandler((Boat) event.getVehicle(), SkyPirates.playerModes.get(player), event.getVehicle().getEntityId());
 
 			SkyPirates.boats.put(boat.getEntityId(), boat);
 			player.sendMessage(ChatColor.AQUA
@@ -110,7 +111,7 @@ public class VehicleListen extends VehicleListener {
 		p.sendMessage(ChatColor.LIGHT_PURPLE
 				+ "The tingling disappears as you hop out.");
 
-		boat.setMode(0);
+		boat.setMode(Modes.normal);
 		super.onVehicleExit(event);
 	}
 
@@ -149,5 +150,9 @@ public class VehicleListen extends VehicleListener {
 			return;
 		}
 		event.getVehicle().teleport(event.getVehicle().getPassenger());
+	}
+
+	public SkyPirates getPlugin() {
+		return plugin;
 	}
 }
