@@ -43,11 +43,28 @@ permissions:
         skypirates.modes.drill:
            description: allows a player to change mode to drill.
            default: op
-        skypirates.items.*:
+        skypirates.items.arrow:
+           description: allows access to item abilities
+           default: true
+        skypirates.items.tnt:
+           description: allows access to item abilities
+           default: true
+        skypirates.items.snowblock:
+           description: allows access to item abilities
+           default: true
+        skypirates.items.diamond:
+           description: allows access to item abilities
+           default: true
+        skypirates.items.coal:
+           description: allows access to item abilities
+           default: true
+        skypirates.items.helmets:
            description: allows access to item abilities
            default: true
 commands:
   skypirates:
     description: help system
   sky:
+    description: help system
+  skypi:
     description: help system

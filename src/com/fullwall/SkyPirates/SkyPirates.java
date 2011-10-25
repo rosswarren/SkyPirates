@@ -39,11 +39,6 @@ public class SkyPirates extends JavaPlugin {
 	}
 
 	public void onEnable() {
-		this.getConfig().set("your boolean property", true);
-		this.getConfig().set("your string property", "yes");
-		this.getConfig().set("your int property", 22);
-		
-		
 		PluginManager pm = getServer().getPluginManager();
 
 		pm.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vl,

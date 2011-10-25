@@ -88,7 +88,6 @@ public class VehicleListen extends VehicleListener {
 					+ "You feel a tingling sensation as you step into the boat.");
 
 		} else {
-
 			boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
 
 			player.sendMessage(ChatColor.AQUA
