@@ -65,11 +65,14 @@ public class VehicleListen extends VehicleListener {
 
 		Player player = (Player) event.getEntered();
 
-		if (!(event.getVehicle() instanceof Boat))
+		if (!(event.getVehicle() instanceof Boat)) {
 			return;
+		}
 
-		if (!(Permission.genericCheck(player, "skypirates.player.enable")))
+		if (!player.hasPermission("skypirates.player.enable")) {
 			return;
+		}
+		
 		BoatHandler boat;
 
 		if ((SkyPirates.playerModes.get(player) == null))
@@ -119,17 +122,23 @@ public class VehicleListen extends VehicleListener {
 			return;
 		}
 
-		if (!(PlayerListen.checkBoats((Boat) event.getVehicle())))
+		if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) {
 			return;
+		}
 
 		Player p = (Player) event.getVehicle().getPassenger();
-		BoatHandler boat = SkyPirates.boats.get(event.getVehicle()
-				.getEntityId());
+		BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
 
-		if (!Permission.genericCheck(p, "skypirates.admin.invincible")
-				|| !(boat.getItemInHandID() == 49 && Permission.genericCheck(p,
-						"skypirates.items.obsidian")))
-			return;
+		boolean blockDamage = false;
+		
+		if (p.hasPermission("skypirates.admin.invincible")) {
+			blockDamage = true;
+		} else if ((boat.getItemInHandID() == 49) && p.hasPermission("skypirates.items.obsidian")) {
+			blockDamage = true;
+		}
+		
+		if (!blockDamage) return;
+		
 		event.setDamage(0);
 		event.setCancelled(true);
 	}

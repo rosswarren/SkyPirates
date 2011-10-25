@@ -39,6 +39,11 @@ public class SkyPirates extends JavaPlugin {
 	}
 
 	public void onEnable() {
+		this.getConfig().set("your boolean property", true);
+		this.getConfig().set("your string property", "yes");
+		this.getConfig().set("your int property", 22);
+		
+		
 		PluginManager pm = getServer().getPluginManager();
 
 		pm.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vl,
@@ -51,7 +56,6 @@ public class SkyPirates extends JavaPlugin {
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		Permission.initialize(getServer());
 
 		log.info("[" + pdfFile.getName() + "]: version ["
 				+ pdfFile.getVersion() + "] (" + codename + ") loaded");
@@ -64,35 +68,46 @@ public class SkyPirates extends JavaPlugin {
 				+ pdfFile.getVersion() + "] (" + codename + ") disabled");
 	}
 
+	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String commandLabel, String[] args) {
 		String commandName = command.getName().toLowerCase();
+		
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("[Skypirates]: Must be ingame to use this command.");
 			return true;
 		}
+		
 		Player player = (Player) sender;
 		commandName = "/" + commandName;
 		String parameters = "";
+		
 		for (String i : args) {
 			parameters += " " + i;
 		}
+		
 		String fullCommand = commandName + parameters;
 		String[] split = fullCommand.split(" ");
-		if (!(Permission.genericCheck(player, "skypirates.player.changemode"))) {
+		
+		if (!player.hasPermission("skypirates.player.changemode")) {
+			player.sendMessage(ChatColor.RED
+					+ "You don't have permission to use that command.");
 			return true;
 		}
+		
 		if (split.length >= 2
 				&& (split[0].equals("/skypirates") || split[0].equals("/sky") || split[0]
 						.contains("/skypi")) && (split[1].length() >= 1)) {
 			if (split[1].equals("clear") || split[1].equals("c")) {
-				if (Permission.genericCheck(player, "skypirates.admin.clear")) {
+				if (player.hasPermission("skypirates.admin.clear")) {
 					BoatHandler b;
+					
 					if (SkyPirates.boats.isEmpty()) {
 						player.sendMessage(ChatColor.GRAY
 								+ "There are no SkyPirates boats to remove.");
 						return true;
 					}
+					
 					for (Entry<Integer, BoatHandler> entry : boats.entrySet()) {
 						b = entry.getValue();
 						if (b.boat.isEmpty()) {
@@ -108,7 +123,7 @@ public class SkyPirates extends JavaPlugin {
 				}
 				return true;
 			} else if (split[1].equals("help")) {
-				if (!(Permission.genericCheck(player, "skypirates.player.help"))) {
+				if (!player.hasPermission("skypirates.player.help")) {
 					player.sendMessage(ChatColor.DARK_RED
 							+ "You don't have permission to use that command.");
 					return true;
@@ -156,7 +171,7 @@ public class SkyPirates extends JavaPlugin {
 			BoatHandler boat = PlayerListen.getBoatHandler((Boat) player
 					.getVehicle());
 			if (split[1].equals("p") || split[1].equals("plane")) {
-				if (Permission.genericCheck(player, "skypirates.modes.plane")) {
+				if (player.hasPermission("skypirates.modes.plane")) {
 					player.sendMessage(ChatColor.GREEN
 							+ "The boat feels suddenly weightless, like a breath of wind would carry you away!");
 					playerModes.put(player, 1);
@@ -168,8 +183,7 @@ public class SkyPirates extends JavaPlugin {
 					return true;
 				}
 			} else if (split[1].equals("s") || split[1].contains("sub")) {
-				if (Permission.genericCheck(player,
-						"skypirates.modes.submarine")) {
+				if (player.hasPermission("skypirates.modes.submarine")) {
 					playerModes.put(player, 2);
 					player.sendMessage(ChatColor.BLUE
 							+ "You feel the boat getting heavier and heavier as you sink beneath the waves.");
@@ -181,8 +195,7 @@ public class SkyPirates extends JavaPlugin {
 					return true;
 				}
 			} else if (split[1].contains("hover") || split[1].equals("h")) {
-				if (Permission.genericCheck(player,
-						"skypirates.modes.hoverboat")) {
+				if (player.hasPermission("skypirates.modes.hoverboat")) {
 					player.sendMessage(ChatColor.GOLD
 							+ "The boat lifts into the air, hovering over the world below.");
 					SkyPirates.playerModes.put(player, 3);
@@ -194,7 +207,7 @@ public class SkyPirates extends JavaPlugin {
 					return true;
 				}
 			} else if (split[1].contains("glider") || split[1].equals("g")) {
-				if (Permission.genericCheck(player, "skypirates.modes.glider")) {
+				if (player.hasPermission("skypirates.modes.glider")) {
 					player.sendMessage(ChatColor.WHITE
 							+ "The boat prepares to float gently downwards.");
 					SkyPirates.playerModes.put(player, 4);
@@ -206,7 +219,7 @@ public class SkyPirates extends JavaPlugin {
 					return true;
 				}
 			} else if (split[1].contains("drill") || split[1].equals("d")) {
-				if (Permission.genericCheck(player, "skypirates.modes.drill")) {
+				if (player.hasPermission("skypirates.modes.drill")) {
 					player.sendMessage(ChatColor.DARK_GRAY
 							+ "The boat feels like it has immense force behind it, enough to drill through solid earth.");
 					SkyPirates.playerModes.put(player, 5);

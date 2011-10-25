@@ -1,0 +1,53 @@
+name: SkyPirates
+version: 1.2.5
+description: SkyPirates is all about freedom in vehicles, about doing what you never thought possible. In Minecraft, boats have long been considered flawed. Ungainly, slow to turn, and ultimately limited, boats are rarely used. SkyPirates is the game changer. Now, the sky is literally the limit, with boats becoming planes, land vehicles, and submarines.
+author: Ross
+website: http://forums.bukkit.org/threads/inactive-mech-skypirates-v1-2-4-planes-submarines-hoverboats-and-more-766-permissions.4134/
+
+main: com.fullwall.SkyPirates.SkyPirates
+
+permissions:
+   skypirates.*:
+      description: Gives access to all SkyPirates commands
+      children:
+        skypirates.admin.invincible:
+           description: stops damage to boat
+           default: op
+        skypirates.admin.clear:
+           description: allows access to the clear command.
+           default: op
+        skypirates.player.enable:
+           description: enables default functions of SkyPirates. (jumping boat, mode change command access)
+           default: true
+        skypirates.player.air:
+           description: gives unlimited air while in submarine mode.
+           default: true
+        skypirates.player.changemode:
+           description: allows a player to change modes.
+           default: true
+        skypirates.player.help:
+           description: gives access to the help command.
+           default: true
+        skypirates.modes.plane:
+           description:  allows a player to change mode to plane.
+           default: true
+        skypirates.modes.submarine:
+           description:  allows a player to change mode to submarine.
+           default: true
+        skypirates.modes.hoverboat:
+           description:  allows a player to change mode to hoverboat.
+           default: true
+        skypirates.modes.glider:
+           description:  allows a player to change mode to glider.
+           default: true
+        skypirates.modes.drill:
+           description: allows a player to change mode to drill.
+           default: op
+        skypirates.items.*:
+           description: allows access to item abilities
+           default: true
+commands:
+  skypirates:
+    description: help system
+  sky:
+    description: help system
