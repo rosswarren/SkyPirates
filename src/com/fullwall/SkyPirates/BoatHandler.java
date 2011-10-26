@@ -4,7 +4,9 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.minecraft.server.EntityBoat;
 import net.minecraft.server.EntityTNTPrimed;
+import org.bukkit.craftbukkit.entity.CraftBoat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -174,10 +176,11 @@ public class BoatHandler {
 		return getMotionX() != 0D || getMotionY() != 0D || getMotionZ() != 0D;
 	}
 
-	//private boolean isGrounded() {
-	//	Entity be = (Entity) ((Entity) this.boat).getHandle();
-	//	return be.onGround;
-	//}
+	private boolean isGrounded() {
+		EntityBoat be = (EntityBoat) ((CraftBoat) this.boat).getHandle();
+		return be.onGround;
+	}
+
 
 	public void stopBoat() {
 		setMotion(0D, 0D, 0D);
@@ -320,11 +323,7 @@ public class BoatHandler {
 		
 		if (!isAttacking && mode != Modes.glider && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
 			changeThrottle(0.25);
-			getPlayer().sendMessage(
-					ChatColor.YELLOW + "The boat " + ChatColor.DARK_RED
-							+ "speeds up." + ChatColor.YELLOW
-							+ " Your speed is now " + throttle
-							+ "x of its original.");
+			getPlayer().sendMessage(ChatColor.YELLOW + "The boat " + ChatColor.DARK_RED + "speeds up." + ChatColor.YELLOW + " Your speed is now " + throttle + "x of its original.");
 		} else {
 			// movementHandler(0.5D);
 			if ((mode == Modes.normal) && delay == 0) {
@@ -386,17 +385,16 @@ public class BoatHandler {
 		double playerVelocityX = playerVelocity.getX();
 		double playerVelocityZ = playerVelocity.getZ();
 
-		//if ((playerVelocityX != 0D || playerVelocityZ != 0D) && isGrounded()) {
-		//	getLocation().setYaw((float) (getYaw() * 2.5));
-		//	speedUpBoat(10, boat.getVelocity());
-		//}
+		if ((playerVelocityX != 0D || playerVelocityZ != 0D) && isGrounded()) {
+			getLocation().setYaw((float) (getYaw() * 2.5));
+			speedUpBoat(10, boat.getVelocity());
+		}
 
 		double currentX = vel.getX();
 		double currentZ = vel.getZ();
 		boolean boostSteering = false;
 
-		if ((playerVelocityX < 0 && currentX > 0)
-				|| (playerVelocityX > 0 && currentX < 0)) {
+		if ((playerVelocityX < 0 && currentX > 0) || (playerVelocityX > 0 && currentX < 0)) {
 			boostSteering = true;
 		}
 		

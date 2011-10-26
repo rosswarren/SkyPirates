@@ -32,7 +32,7 @@ public class SkyPirates extends JavaPlugin {
 
 	public static SkyPirates plugin;
 
-	private static final String codename = "Donkey";
+	private static final String codename = "Frodo";
 	public static Logger log = Logger.getLogger("Minecraft");
 
 	public void onLoad() {
@@ -47,6 +47,7 @@ public class SkyPirates extends JavaPlugin {
 		pluginManager.registerEvent(Event.Type.VEHICLE_EXIT, vl, Priority.Normal, this);
 		pluginManager.registerEvent(Event.Type.VEHICLE_DAMAGE, vl, Priority.Normal, this);
 		pluginManager.registerEvent(Event.Type.PLAYER_INTERACT, pl, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, pl, Priority.Normal, this);
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
