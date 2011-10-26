@@ -381,9 +381,7 @@ public class BoatHandler {
 	}
 
 	private void doNormal(Vector vel) {
-
 		Entity ce = (Entity) this.boat.getPassenger();
-
 		Vector playerVelocity = ce.getVelocity().clone();
 		double playerVelocityX = playerVelocity.getX();
 		double playerVelocityZ = playerVelocity.getZ();
@@ -402,8 +400,7 @@ public class BoatHandler {
 			boostSteering = true;
 		}
 		
-		if (!boostSteering && (playerVelocityZ < 0 && currentZ > 0)
-				|| (playerVelocityZ > 0 && currentZ < 0)) {
+		if (!boostSteering && (playerVelocityZ < 0 && currentZ > 0) || (playerVelocityZ > 0 && currentZ < 0)) {
 			boostSteering = true;
 		}
 		
@@ -449,8 +446,6 @@ public class BoatHandler {
 			}
 			
 			setMotion(vel.getX(), vel.getY(), vel.getZ());
-			
-			return;
 		} else if (vel.getY() <= 0D) {
 			// workaround for bukkit glitch - setting motion to 0 still results
 			// in downward moving. Not perfect, but it's the best it's going to
@@ -463,7 +458,6 @@ public class BoatHandler {
 			}
 			
 			setMotion(vel.getX(), vel.getY(), vel.getZ());
-			return;
 		} else {
 			// see above.
 			if (boat.getVelocity().getY() <= 0 && boat.getVelocity().getY() >= DOWNWARD_DRIFT) {
@@ -473,8 +467,6 @@ public class BoatHandler {
 			}
 			
 			setMotion(vel.getX(), vel.getY(), vel.getZ());
-			
-			return;
 		}
 	}
 
@@ -667,6 +659,7 @@ public class BoatHandler {
 			this.i = i;
 		}
 
+		@Override
 		public void run() {
 			Location loc = i.getLocation();
 			int x = loc.getBlockX();
@@ -682,9 +675,6 @@ public class BoatHandler {
 				EntityTNTPrimed tnt = new EntityTNTPrimed(world.getHandle(), b.getX() + 0.5F, b.getY() + 0.5F, b.getZ() + 0.5F);
 
 				world.getHandle().addEntity(tnt);
-				
-				//world.getHandle().add
-				
 				b.setType(Material.AIR);
 			}
 		}

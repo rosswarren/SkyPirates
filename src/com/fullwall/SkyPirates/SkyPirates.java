@@ -40,28 +40,23 @@ public class SkyPirates extends JavaPlugin {
 	}
 
 	public void onEnable() {
-		PluginManager pm = getServer().getPluginManager();
-
-		pm.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vl,
-				Priority.Normal, this);
-		pm.registerEvent(Event.Type.VEHICLE_MOVE, vl, Priority.Normal, this);
-		pm.registerEvent(Event.Type.VEHICLE_ENTER, vl, Priority.Normal, this);
-		pm.registerEvent(Event.Type.VEHICLE_EXIT, vl, Priority.Normal, this);
-		pm.registerEvent(Event.Type.VEHICLE_DAMAGE, vl, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, pl, Priority.Normal, this);
+		PluginManager pluginManager = getServer().getPluginManager();
+		pluginManager.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vl, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.VEHICLE_MOVE, vl, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.VEHICLE_ENTER, vl, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.VEHICLE_EXIT, vl, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.VEHICLE_DAMAGE, vl, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.PLAYER_INTERACT, pl, Priority.Normal, this);
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-
-		log.info("[" + pdfFile.getName() + "]: version ["
-				+ pdfFile.getVersion() + "] (" + codename + ") loaded");
+		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] (" + codename + ") loaded");
 
 	}
 
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info("[" + pdfFile.getName() + "]: version ["
-				+ pdfFile.getVersion() + "] (" + codename + ") disabled");
+		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] (" + codename + ") disabled");
 	}
 
 	@Override
@@ -121,23 +116,15 @@ public class SkyPirates extends JavaPlugin {
 							+ "You don't have permission to use that command.");
 					return true;
 				}
+				
 				player.sendMessage(ChatColor.AQUA + "SkyPirates Modes List");
 				player.sendMessage(ChatColor.YELLOW + "---------------------");
-				player.sendMessage(ChatColor.GREEN + "plane|p - "
-						+ ChatColor.AQUA + "turns your boat into a plane.");
-				player.sendMessage(ChatColor.GREEN + "submarine|sub|s - "
-						+ ChatColor.AQUA
-						+ "turns your boat into a submersible.");
-				player.sendMessage(ChatColor.GREEN + "hoverboat|h - "
-						+ ChatColor.AQUA + "turns your boat into a hoverboat.");
-				player.sendMessage(ChatColor.GREEN + "glider|g - "
-						+ ChatColor.AQUA + "turns your boat into a glider.");
-				player.sendMessage(ChatColor.GREEN + "drill|d - "
-						+ ChatColor.AQUA + "turns your boat into a drill.");
-				player.sendMessage(ChatColor.GREEN
-						+ "anything else - "
-						+ ChatColor.AQUA
-						+ "turns your boat back into the regular old jumping variety.");
+				player.sendMessage(ChatColor.GREEN + "plane|p - " + ChatColor.AQUA + "turns your boat into a plane.");
+				player.sendMessage(ChatColor.GREEN + "submarine|sub|s - " + ChatColor.AQUA + "turns your boat into a submersible.");
+				player.sendMessage(ChatColor.GREEN + "hoverboat|h - " + ChatColor.AQUA + "turns your boat into a hoverboat.");
+				player.sendMessage(ChatColor.GREEN + "glider|g - " + ChatColor.AQUA + "turns your boat into a glider.");
+				player.sendMessage(ChatColor.GREEN + "drill|d - " + ChatColor.AQUA + "turns your boat into a drill.");
+				player.sendMessage(ChatColor.GREEN + "anything else - " + ChatColor.AQUA + "turns your boat back into the regular old jumping variety.");
 				player.sendMessage(ChatColor.YELLOW + "---------------------");
 				return true;
 			}
@@ -171,57 +158,46 @@ public class SkyPirates extends JavaPlugin {
 					player.sendMessage(ChatColor.GREEN + "The boat feels suddenly weightless, like a breath of wind would carry you away!");
 					playerModes.put(player, Modes.plane);
 					boat.setMode(Modes.plane);
-					return true;
 				} else {
 					player.sendMessage(ChatColor.RED + "As much as you will it to float, the boat remains stubbornly on the ground.");
-					return true;
 				}
 			} else if (split[1].equals("s") || split[1].contains("sub")) {
 				if (player.hasPermission("skypirates.modes.submarine")) {
 					playerModes.put(player, Modes.submarine);
 					player.sendMessage(ChatColor.BLUE + "You feel the boat getting heavier and heavier as you sink beneath the waves.");
 					boat.setMode(Modes.submarine);
-					return true;
 				} else {
 					player.sendMessage(ChatColor.RED + "As hard as you try, the boat refuses to sink below the water.");
-					return true;
 				}
 			} else if (split[1].contains("hover") || split[1].equals("h")) {
 				if (player.hasPermission("skypirates.modes.hoverboat")) {
 					player.sendMessage(ChatColor.GOLD + "The boat lifts into the air, hovering over the world below.");
 					SkyPirates.playerModes.put(player, Modes.hover);
 					boat.setMode(Modes.hover);
-					return true;
 				} else {
 					player.sendMessage(ChatColor.RED + "The boat retains its usual weight.");
-					return true;
 				}
 			} else if (split[1].contains("glider") || split[1].equals("g")) {
 				if (player.hasPermission("skypirates.modes.glider")) {
 					player.sendMessage(ChatColor.WHITE + "The boat prepares to float gently downwards.");
 					SkyPirates.playerModes.put(player, Modes.glider);
 					boat.setMode(Modes.glider);
-					return true;
 				} else {
 					player.sendMessage(ChatColor.RED + "The boat retains its usual weight.");
-					return true;
 				}
 			} else if (split[1].contains("drill") || split[1].equals("d")) {
 				if (player.hasPermission("skypirates.modes.drill")) {
 					player.sendMessage(ChatColor.DARK_GRAY + "The boat feels like it has immense force behind it, enough to drill through solid earth.");
 					SkyPirates.playerModes.put(player, Modes.drill);
 					boat.setMode(Modes.drill);
-					return true;
 				} else {
 					player.sendMessage(ChatColor.RED + "The boat retains its usual strength.");
-					return true;
 				}
 			} else {
 				player.sendMessage(ChatColor.GRAY + "The boat is just that, an ordinary vehicle.");
 				SkyPirates.playerModes.put(player, Modes.normal);
 				boat.setMode(Modes.normal);
 				boat.resetValues();
-				return true;
 			}
 		}
 		
