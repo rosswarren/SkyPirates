@@ -1,0 +1,54 @@
+== SkyPirates 1.2.6 ==
+
+{{http://i.imgur.com/MYNne.png|Sky Pirates}}
+
+=== Description ===
+I have taken over this inactive project. [[http://forums.bukkit.org/threads/inactive-mech-skypirates-v1-2-4-planes-submarines-hoverboats-and-more-766-permissions.4134/|Found here]]
+
+Source code is on [[https://github.com/rosswarren/SkyPirates|Github]]
+
+SkyPirates is all about freedom in vehicles, about doing what you never thought possible. In Minecraft, boats have long been considered flawed. Ungainly, slow to turn, and ultimately limited, boats are rarely used.
+
+SkyPirates is the game changer.
+
+Now, the sky is literally the limit, with boats becoming planes, land vehicles, and submarines.
+
+**Fly** through the air with a swing of your arm, fly to the next building project, and swoop to a graceful landing. Experience the unbridled joy in just leaving the confines of the earth below.
+
+**Jump** onto land, and watch as your boat smoothly transitions into an amphibious driving machine. Use for faster transportation, or simply for fun as you jump your way through the landscape.
+
+**Dive** into the ocean as a submarine, moving silently through the squids, surfacing at will. Explore the ocean depths, build the next underwater city, and surprise other players by popping up next to them.
+
+**Hover** over land and sea with the new hoverboat mode. Simply control with the arrow keys and float serenely over any obstacles in your path. Floats one block above the ground.
+
+**Glide** down to the ground with the glide mode. Floats slowly down to the ground, useful when you don't want to simply drop from a great height.
+
+**Drill** to great depths with the new drill mode. Get ores, endless stacks of stone and more underground... just be sure to watch out for lava!
+
+Permissions are now handled the native bukkit way!
+
+Turning speed is also increased, so no more painstakingly slow arcs to avoid that obstacle.
+
+SkyPirates - the ultimate in transportation plugins.
+
+=== Features: ===
+Six different modes of boats - amphibious, plane, hover, glide, drill and submarine.
+Easy to learn, arm-based movement controls.
+Permissions support.
+
+
+=== Known Issues ===
+
+Due to missing Bukkit hooks, the player must be holding an item to right click and move down in flying or submarine modes.
+Also due to Bukkit issues, even if invincible permission is given, boats will still die on block collision. Nothing I can do to alleviate that at the moment, but rest assured, it will be fixed when possible!
+Currently, it can be hard to start moving on land from a still position. Just keep jumping and moving, and it'll kick in. I'll fix this issue when I can!
+Controls:
+
+SkyPirate is designed to be as easy to use as possible. To change modes, use the SkyPirates command detailed in the commands section of this post. If given the appropriate permissions, every time a player steps into a boat, the default mode will be enabled. Simply swing your arm to jump, and once on land, you will also be able to drive as normal.
+
+Once in flying mode, use arm swings to fly up, and right clicks to head down. The boat controls are otherwise exactly the same. The only limitation, due to missing Bukkit hooks, is that one must be holding an item while right clicking to go down. An easy to learn control method, without breaking the flow of immersion.
+
+While in submarine mode, the boat will automatically sink slowly towards the bottom. If given the infinite air permission (look below), you will never run out of air. To swim towards the surface, swing your arm in any direction. To drop faster, use right clicks.
+
+=== Credits ===
+Most major functionality is written by fullwall, but people, either unknowingly or not, helped with the making of this plugin. Some credit must go to Afforess, some of whose Minecart Mania code fullwall used as a starting point. The author of PickBoat too, for his damage boat code fullwall used in an attempt to stop block collisions killing boats. The testers fullwall pressganged into helping me deserve thanks, as does Redecouverte, whose boat turning and speed up code fullwall adapted for the plugin. Lucagd, who came up with the idea for the name, wanted credit, so here it is.
