@@ -34,7 +34,7 @@ public class PlayerListen extends PlayerListener {
 		if (event.getAction() == Action.RIGHT_CLICK_AIR
 				|| event.getAction() == Action.RIGHT_CLICK_BLOCK)
 			boat.doRightClick();
-		else if (boat.delay == 0)
+		else if (boat.getDelay() == 0)
 			boat.doArmSwing();
 	}
 

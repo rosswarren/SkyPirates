@@ -2,17 +2,14 @@ package com.fullwall.SkyPirates;
 
 import java.util.Calendar;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import net.minecraft.server.EntityBoat;
-import net.minecraft.server.EntityTNTPrimed;
 import org.bukkit.craftbukkit.entity.CraftBoat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -22,27 +19,28 @@ import org.bukkit.util.Vector;
 
 public class BoatHandler {
 	public enum Modes {
-		normal,
-		plane,
-		submarine,
-		hover,
-		glider,
-		drill
+		NORMAL,
+		PLANE,
+		SUBMARINE,
+		HOVER,
+		GLIDER,
+		DRILL
 	}
 	
 	public final Boat boat;
 	private Vector previousLocation;
 	private Vector previousMotion;
 	private boolean wasMovingLastTick;
-	public Calendar cal;
+	
+	private Calendar cal;
 
 	// mode - 0 is normal, 1 is plane, 2 is submarine, 3 is hoverboat, 4 is
 	// glider
-	private Modes mode = Modes.normal;
+	private Modes mode = Modes.NORMAL;
 	
 	private int entityID = 0;
-	public long delay = 0;
-	public boolean isAttacking = false;
+	private long delay = 0;
+	private boolean isAttacking = false;
 	private boolean throttleChanged = false;
 
 	// 1E308 - max possible floating point value;
@@ -291,21 +289,21 @@ public class BoatHandler {
 		}
 		
 		switch (mode) {
-		case normal:
+		case NORMAL:
 			doNormal(vel);
 			break;
-		case plane:
+		case PLANE:
 			doFlying(vel);
 			break;
-		case submarine:
+		case SUBMARINE:
 			doUnderwater(vel);
 			break;
-		case hover:
+		case HOVER:
 			doHover(vel);
 			break;
-		case glider:
+		case GLIDER:
 			doGlider(vel);
-		case drill:
+		case DRILL:
 			//
 			break;
 		}
@@ -321,12 +319,12 @@ public class BoatHandler {
 	public void doArmSwing() {
 		Player p = getPlayer();
 		
-		if (!isAttacking && mode != Modes.glider && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
+		if (!isAttacking && mode != Modes.GLIDER && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
 			changeThrottle(0.25);
 			getPlayer().sendMessage(ChatColor.YELLOW + "The boat " + ChatColor.DARK_RED + "speeds up." + ChatColor.YELLOW + " Your speed is now " + throttle + "x of its original.");
 		} else {
 			// movementHandler(0.5D);
-			if ((mode == Modes.normal) && delay == 0) {
+			if ((mode == Modes.NORMAL) && delay == 0) {
 				if (getItemInHandID() == 263 && p.hasPermission("skypirates.items.coal")) {
 					movementHandler(0.75D);
 					delay = cal.getTimeInMillis() + 750;
@@ -334,7 +332,7 @@ public class BoatHandler {
 					movementHandler(0.5D);
 					delay = cal.getTimeInMillis();
 				}
-			} else if (mode == Modes.plane) {
+			} else if (mode == Modes.PLANE) {
 				if (getItemInHandID() == 263 && p.hasPermission("skypirates.items.coal")) {
 					goingUp = true;
 					movementHandler(0.5D);
@@ -342,10 +340,10 @@ public class BoatHandler {
 					goingUp = true;
 					movementHandler(0.5D);
 				}
-			} else if (mode == Modes.submarine) {
+			} else if (mode == Modes.SUBMARINE) {
 				goingUp = true;
 				movementHandler(0.1D);
-			} else if (mode == Modes.glider && (getBlockIdBeneath() != 8 && getBlockIdBeneath() != 9)) {
+			} else if (mode == Modes.GLIDER && (getBlockIdBeneath() != 8 && getBlockIdBeneath() != 9)) {
 				speedUpBoat(10, boat.getVelocity());
 			}
 		}
@@ -360,7 +358,7 @@ public class BoatHandler {
 			getPlayer().sendMessage(ChatColor.BLUE + "The boat slows. Your speed is now " + throttle + "x of its original.");
 		} else if (getItemInHandID() == 262 && p.hasPermission("skypirates.items.arrow")) {
 			getPlayer().shootArrow();
-		} else if (mode == Modes.plane && getItemInHandID() == 46 & p.hasPermission("skypirates.items.tnt")) {
+		} else if (mode == Modes.PLANE && getItemInHandID() == 46 & p.hasPermission("skypirates.items.tnt")) {
 			Item item = getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(Material.TNT, 1));
 			Timer t = new Timer();
 			t.schedule(new DropTNT(item), 1000);
@@ -368,13 +366,13 @@ public class BoatHandler {
 			stopBoat();
 			setThrottle(1D);
 			getPlayer().sendMessage(ChatColor.DARK_RED + "The boat stops with a sudden jolt. Your speed is now only 1x original.");
-		} else if (mode == Modes.plane) {
+		} else if (mode == Modes.PLANE) {
 			goingDown = true;
 			movementHandler(-0.65D);
-		} else if (mode == Modes.submarine) {
+		} else if (mode == Modes.SUBMARINE) {
 			goingDown = true;
 			movementHandler(-0.2D);
-		} else if (mode == Modes.drill) {
+		} else if (mode == Modes.DRILL) {
 			doDrill();
 		}
 	}
@@ -382,6 +380,7 @@ public class BoatHandler {
 	private void doNormal(Vector vel) {
 		Entity ce = (Entity) this.boat.getPassenger();
 		Vector playerVelocity = ce.getVelocity().clone();
+		
 		double playerVelocityX = playerVelocity.getX();
 		double playerVelocityZ = playerVelocity.getZ();
 
@@ -392,6 +391,7 @@ public class BoatHandler {
 
 		double currentX = vel.getX();
 		double currentZ = vel.getZ();
+		
 		boolean boostSteering = false;
 
 		if ((playerVelocityX < 0 && currentX > 0) || (playerVelocityX > 0 && currentX < 0)) {
@@ -426,7 +426,7 @@ public class BoatHandler {
 	}
 
 	private void doFlying(Vector vel) {
-		if (goingUp == true) {
+		if (goingUp) {
 			// vel.setY(vel.getY() - 0.02);
 			if (vel.getY() <= 0D) {
 				goingUp = false;
@@ -437,7 +437,7 @@ public class BoatHandler {
 			return;
 		}
 		
-		if (goingDown == true) {
+		if (goingDown) {
 			if (vel.getY() <= 0D) {
 				vel.setY(vel.getY() + 0.25);
 				if (vel.getY() >= 0D) goingDown = false;
@@ -649,32 +649,13 @@ public class BoatHandler {
 	public boolean isFirstRun() {
 		return firstRun;
 	}
-
-	class DropTNT extends TimerTask {
-		private Item i;
-
-		public DropTNT(Item i) {
-			this.i = i;
-		}
-
-		@Override
-		public void run() {
-			Location loc = i.getLocation();
-			int x = loc.getBlockX();
-			int y = loc.getBlockY();
-			int z = loc.getBlockZ();
-			
-			if (i.getWorld().getBlockAt(x, y - 1, z).getType() == Material.AIR) {
-				Block b = i.getWorld().getBlockAt(i.getLocation());
-				i.remove();
-				b.setType(Material.TNT);				
-				
-				CraftWorld world = (CraftWorld)b.getWorld();
-				EntityTNTPrimed tnt = new EntityTNTPrimed(world.getHandle(), b.getX() + 0.5F, b.getY() + 0.5F, b.getZ() + 0.5F);
-
-				world.getHandle().addEntity(tnt);
-				b.setType(Material.AIR);
-			}
-		}
+	
+	public long getDelay() {
+		return delay;
 	}
+
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
+
 }

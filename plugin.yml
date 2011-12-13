@@ -1,5 +1,5 @@
 name: SkyPirates
-version: 1.2.7
+version: 1.3.0
 description: SkyPirates is all about freedom in vehicles, about doing what you never thought possible. In Minecraft, boats have long been considered flawed. Ungainly, slow to turn, and ultimately limited, boats are rarely used. SkyPirates is the game changer. Now, the sky is literally the limit, with boats becoming planes, land vehicles, and submarines.
 author: Ross
 website: http://dev.bukkit.org/server-mods/skypirates
@@ -44,10 +44,10 @@ permissions:
            default: op
         skypirates.items.arrow:
            description: allows access to item abilities
-           default: true
+           default: op
         skypirates.items.tnt:
            description: allows access to item abilities
-           default: true
+           default: op
         skypirates.items.snowblock:
            description: allows access to item abilities
            default: true

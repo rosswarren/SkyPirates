@@ -41,7 +41,6 @@ public class VehicleListen extends VehicleListener {
 		
 		if (!(p.isInsideVehicle())) return;
 			
-		
 		if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) return;
 
 		from = event.getFrom();
@@ -61,6 +60,7 @@ public class VehicleListen extends VehicleListener {
 		return;
 	}
 
+	@Override
 	public void onVehicleEnter(VehicleEnterEvent event) {
 		if (!(event.getEntered() instanceof Player))
 			return;
@@ -78,46 +78,48 @@ public class VehicleListen extends VehicleListener {
 		BoatHandler boat;
 
 		if ((SkyPirates.playerModes.get(player) == null)) {
-			SkyPirates.playerModes.put(player, Modes.normal);
+			SkyPirates.playerModes.put(player, Modes.NORMAL);
 		}
-
+		
 		if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) {
 			boat = new BoatHandler((Boat) event.getVehicle(), SkyPirates.playerModes.get(player), event.getVehicle().getEntityId());
-
 			SkyPirates.boats.put(boat.getEntityId(), boat);
-			player.sendMessage(ChatColor.AQUA
-					+ "You feel a tingling sensation as you step into the boat.");
-
 		} else {
 			boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
-
-			player.sendMessage(ChatColor.AQUA
-					+ "You feel a tingling sensation as you step into the boat.");
+			
 		}
+		
+		player.sendMessage(ChatColor.AQUA + "You feel a tingling sensation as you step into the boat.");
+		
 		boat.setMode(SkyPirates.playerModes.get(player));
 		super.onVehicleEnter(event);
 	}
 
+	@Override
 	public void onVehicleExit(VehicleExitEvent event) {
-		if (!(event.getExited() instanceof Player))
+		if (!(event.getExited() instanceof Player)) {
 			return;
-		if (!(event.getVehicle() instanceof Boat))
+		}
+		
+		if (!(event.getVehicle() instanceof Boat)) {
 			return;
-		if (!(PlayerListen.checkBoats((Boat) event.getVehicle())))
+		}
+		
+		if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) {
 			return;
-		BoatHandler boat = SkyPirates.boats.get(event.getVehicle()
-				.getEntityId());
+		}
+		
+		BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
 		Player p = (Player) event.getExited();
-		p.sendMessage(ChatColor.LIGHT_PURPLE
-				+ "The tingling disappears as you hop out.");
-
-		boat.setMode(Modes.normal);
+		p.sendMessage(ChatColor.LIGHT_PURPLE + "The tingling disappears as you hop out.");
+		boat.setMode(Modes.NORMAL);
+		
 		super.onVehicleExit(event);
 	}
 
+	@Override
 	public void onVehicleDamage(VehicleDamageEvent event) {
-		if (!(event.getVehicle() instanceof Boat)
-				|| !(event.getVehicle().getPassenger() instanceof Player)) {
+		if (!(event.getVehicle() instanceof Boat) || !(event.getVehicle().getPassenger() instanceof Player)) {
 			super.onVehicleDamage(event);
 			return;
 		}
@@ -137,15 +139,15 @@ public class VehicleListen extends VehicleListener {
 			blockDamage = true;
 		}
 		
-		if (!blockDamage) return;
-		
-		event.setDamage(0);
-		event.setCancelled(true);
+		if (blockDamage) {
+			event.setDamage(0);
+			event.setCancelled(true);
+		}
 	}
 
+	@Override
 	public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-		if (!(event.getVehicle() instanceof Boat)
-				|| !(event.getVehicle().getPassenger() instanceof Player)) {
+		if (!(event.getVehicle() instanceof Boat) || !(event.getVehicle().getPassenger() instanceof Player)) {
 			super.onVehicleBlockCollision(event);
 			return;
 		}
