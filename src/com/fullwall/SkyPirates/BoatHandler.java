@@ -52,7 +52,7 @@ public class BoatHandler {
 	public double fromYaw = 0D;
 	public double toYaw = 0D;
 	private int hoverHeight = 0;
-
+	private double maxSpeed = 2.0D;
 	private boolean goingDown = false;
 	private boolean goingUp = false;
 	private boolean firstRun = true;
@@ -64,6 +64,7 @@ public class BoatHandler {
 
 	public BoatHandler(Boat newBoat, Modes newMode, int ID) {
 		boat = newBoat;
+		boat.setMaxSpeed(maxSpeed);
 		mode = newMode;
 		entityID = ID;
 		cal = Calendar.getInstance();
@@ -210,8 +211,8 @@ public class BoatHandler {
 	private void changeThrottle(double change) {
 		throttle += change;
 		
-		if (throttle >= 2.5D) {
-			throttle = 2.5D;
+		if (throttle >= 15.0D) {
+			throttle = 15.0D;
 		} else if (throttle <= 0D) {
 			throttle = 0D;
 		}
@@ -235,18 +236,18 @@ public class BoatHandler {
 		double curX = vel.getX();
 		double curZ = vel.getZ();
 		double newX = curX * factor;
-		
-		if (Math.abs(newX) > 0.4D) {
+
+		if (Math.abs(newX) > maxSpeed) {
 			if (newX < 0) {
-				newX = -0.4D;
+				newX = -maxSpeed;
 			} else {
-				newX = 0.4D;
+				newX = maxSpeed;
 			}
 			
 			double newZ = 0D;
 			
 			if (curZ != 0D) {
-				newZ = 0.4D / Math.abs(curX / curZ);
+				newZ = maxSpeed / Math.abs(curX / curZ);
 				
 				if (curZ < 0) {
 					newZ *= -1;
@@ -258,17 +259,17 @@ public class BoatHandler {
 		
 		double newZ = curZ * factor;
 		
-		if (Math.abs(newZ) > 0.4D) {
+		if (Math.abs(newZ) > maxSpeed) {
 			if (newZ < 0) {
-				newZ = -0.4D;
+				newZ = -maxSpeed;
 			} else {
-				newZ = 0.4D;
+				newZ = maxSpeed;
 			}
 			
 			newX = 0D;
 			
 			if (curX != 0D) {
-				newX = 0.4D / (curZ / curX);
+				newX = maxSpeed / (curZ / curX);
 				
 				if (curX < 0) {
 					newX *= -1;
@@ -320,7 +321,7 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if (!isAttacking && mode != Modes.GLIDER && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			changeThrottle(0.25);
+			changeThrottle(1.0);
 			getPlayer().sendMessage(ChatColor.YELLOW + "The boat " + ChatColor.DARK_RED + "speeds up." + ChatColor.YELLOW + " Your speed is now " + throttle + "x of its original.");
 		} else {
 			// movementHandler(0.5D);

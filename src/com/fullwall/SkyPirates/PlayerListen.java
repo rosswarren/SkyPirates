@@ -23,26 +23,26 @@ public class PlayerListen extends PlayerListener {
 		if (event.hasBlock() && event.getClickedBlock().getType() == Material.BOAT) {
 			return;
 		}
+		
 		Player p = event.getPlayer();
+		
 		if (!(p.isInsideVehicle()))
 			return;
+		
 		if (!(p.getVehicle() instanceof Boat))
 			return;
+		
 		if (!(checkBoats((Boat) p.getVehicle())))
 			return;
+		
 		BoatHandler boat = getBoatHandler((Boat) p.getVehicle());
-		if (event.getAction() == Action.RIGHT_CLICK_AIR
-				|| event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
 			boat.doRightClick();
+		
 		else if (boat.getDelay() == 0)
 			boat.doArmSwing();
 	}
-
-	/*
-	 * public void onPlayerJoin(PlayerEvent event) {
-	 * Boating.playerModes.put(event.getPlayer(), 0); super.onPlayerJoin(event);
-	 * }
-	 */
 
 	public static boolean checkBoats(Boat boat) {
 		if (SkyPirates.boats != null && SkyPirates.boats.get(boat.getEntityId()) != null) {
@@ -69,6 +69,7 @@ public class PlayerListen extends PlayerListener {
 		
 		boat.doRightClick();
 	}
+	
 
 	public static BoatHandler getBoatHandler(Boat boat) {
 		return SkyPirates.boats.get(boat.getEntityId());
