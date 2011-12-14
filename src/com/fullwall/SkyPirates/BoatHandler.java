@@ -41,22 +41,18 @@ public class BoatHandler {
 	private int entityID = 0;
 	private long delay = 0;
 	private boolean isAttacking = false;
-	private boolean throttleChanged = false;
 
 	// 1E308 - max possible floating point value;
 	private final double maxMomentum = 10D;
 	private double rotationMultipler = 0D;
 	private final double flyingMult = 1.0D;
-
-	private double throttle = 1D;
 	public double fromYaw = 0D;
 	public double toYaw = 0D;
 	private int hoverHeight = 0;
-	private double maxSpeed = 2.0D;
+	private double maxSpeed = 0.8D;
 	private boolean goingDown = false;
 	private boolean goingUp = false;
 	private boolean firstRun = true;
-	private boolean fast = false;
 
 	private final double DOWNWARD_DRIFT = -0.037999998673796664D;
 	private final double COMPENSATION = 0.0379999999999999999999999999999999999999999999D;
@@ -99,25 +95,17 @@ public class BoatHandler {
 
 	public void setMotionX(double motionX) {
 		motionX = RangeHandler.range(motionX, maxMomentum, -maxMomentum);
-		setMotion(motionX, getMotionY(), getMotionZ());
+		setMotion(motionX, boat.getVelocity().getY(), boat.getVelocity().getZ());
 	}
 
 	public void setMotionY(double motionY) {
 		motionY = RangeHandler.range(motionY, maxMomentum, -maxMomentum);
-		setMotion(getMotionX(), motionY, getMotionZ());
+		setMotion(boat.getVelocity().getX(), motionY, boat.getVelocity().getZ());
 	}
 
 	public void setMotionZ(double motionZ) {
 		motionZ = RangeHandler.range(motionZ, maxMomentum, -maxMomentum);
-		setMotion(getMotionX(), getMotionY(), motionZ);
-	}
-
-	public double getMotionX() {
-		return boat.getVelocity().getX();
-	}
-
-	public double getMotionY() {
-		return boat.getVelocity().getY();
+		setMotion(boat.getVelocity().getX(), boat.getVelocity().getY(), motionZ);
 	}
 
 	public int getX() {
@@ -132,10 +120,6 @@ public class BoatHandler {
 		return boat.getLocation().getBlockZ();
 	}
 
-	public double getMotionZ() {
-		return boat.getVelocity().getZ();
-	}
-
 	public boolean getMovingLastTick() {
 		return wasMovingLastTick;
 	}
@@ -145,8 +129,7 @@ public class BoatHandler {
 	}
 
 	public int getBlockIdBeneath() {
-		return boat.getWorld().getBlockAt(getX(), getY() - 1, getZ())
-				.getTypeId();
+		return boat.getWorld().getBlockAt(getX(), getY() - 1, getZ()).getTypeId();
 	}
 
 	public ItemStack getItemInHand() {
@@ -175,7 +158,7 @@ public class BoatHandler {
 	}
 
 	public boolean isMoving() {
-		return getMotionX() != 0D || getMotionY() != 0D || getMotionZ() != 0D;
+		return boat.getVelocity().getX() != 0D || boat.getVelocity().getY() != 0D || boat.getVelocity().getZ() != 0D;
 	}
 
 	private boolean isGrounded() {
@@ -206,14 +189,9 @@ public class BoatHandler {
 		return;
 	}
 
-	private void setThrottle(double change) {
-		throttle = change;
-		return;
-	}
-
 	public void doRealisticFriction() {
 		if (getPlayer() == null) {
-			setMotion(getMotionX() * 0.53774, getMotionY(), getMotionZ() * 0.53774);
+			setMotion(boat.getVelocity().getX() * 0.53774, boat.getVelocity().getY(), boat.getVelocity().getZ() * 0.53774);
 		}
 	}
 
@@ -222,58 +200,26 @@ public class BoatHandler {
 		double curZ = vel.getZ();
 		double newX = curX * factor;
 
-	//	if (Math.abs(newX) > maxSpeed) {
-			if (newX < 0) {
-				newX = -maxSpeed;
-			} else {
-				newX = maxSpeed;
-			}
-			
-			double newZ = 0D;
-			
-			if (curZ != 0D) {
-				newZ = maxSpeed / Math.abs(curX / curZ);
-				
-				if (curZ < 0) {
-					newZ *= -1;
-				}
-			}
-			this.setMotion(newX, vel.getY(), newZ);
-			return;
-	//	}
-		
-		//double newZ = curZ * factor;
-		
-		/*if (Math.abs(newZ) > maxSpeed) {
-			if (newZ < 0) {
-				newZ = -maxSpeed;
-			} else {
-				newZ = maxSpeed;
-			}
-			
-			newX = 0D;
-			
-			if (curX != 0D) {
-				newX = maxSpeed / (curZ / curX);
-				
-				if (curX < 0) {
-					newX *= -1;
-				}
-			}
-			this.setMotion(newX, vel.getY(), newZ);
-			
-			return;
+		if (newX < 0) {
+			newX = -maxSpeed;
+		} else {
+			newX = maxSpeed;
 		}
-		this.setMotion(newX, vel.getY(), newZ);*/
+		
+		double newZ = 0D;
+		
+		if (curZ != 0D) {
+			newZ = maxSpeed / Math.abs(curX / curZ);
+			
+			if (curZ < 0) {
+				newZ *= -1;
+			}
+		}
+		this.setMotion(newX, vel.getY(), newZ);
+		return;
 	}
 
 	public void movementHandler(Vector vel) {
-		Vector newvel = boat.getVelocity();
-		
-		if (fast) {
-			speedUpBoat(throttle, newvel);
-		}
-		
 		switch (mode) {
 		case NORMAL:
 			doNormal(vel);
@@ -290,7 +236,7 @@ public class BoatHandler {
 		case GLIDER:
 			doGlider(vel);
 		case DRILL:
-			//
+			// no movement
 			break;
 		}
 
@@ -306,7 +252,7 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if (!isAttacking && mode != Modes.GLIDER && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			getPlayer().sendMessage(ChatColor.YELLOW + "The boat " + ChatColor.DARK_RED + "speeds up." + ChatColor.YELLOW + " Your speed is now " + throttle + "x of its original.");
+			// no left hand action for diamond currently
 		} else {
 			// movementHandler(0.5D);
 			if ((mode == Modes.NORMAL) && delay == 0) {
@@ -339,16 +285,10 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if (getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			
-			
 			if (!getPlayer().isSneaking()) {
-				fast = !fast;
-				
-				if (fast) getPlayer().sendMessage(ChatColor.BLUE + "Fast mode engaged");
-				else getPlayer().sendMessage(ChatColor.BLUE + "Fast mode disengaged");
+				speedUpBoat(10, boat.getVelocity());
+				getPlayer().sendMessage(ChatColor.BLUE + "Boost!");
 			}
-			
-			
 		} else if (getItemInHandID() == 262 && p.hasPermission("skypirates.items.arrow")) {
 			getPlayer().shootArrow();
 		} else if (mode == Modes.PLANE && getItemInHandID() == 46 & p.hasPermission("skypirates.items.tnt")) {
@@ -357,8 +297,7 @@ public class BoatHandler {
 			t.schedule(new DropTNT(item), 1000);
 		} else if (getItemInHandID() == 80 && p.hasPermission("skypirates.items.snowblock")) {
 			stopBoat();
-			setThrottle(1D);
-			getPlayer().sendMessage(ChatColor.DARK_RED + "The boat stops with a sudden jolt. Your speed is now only 1x original.");
+			getPlayer().sendMessage(ChatColor.DARK_RED + "The boat stops with a sudden jolt.");
 		} else if (mode == Modes.PLANE) {
 			goingDown = true;
 			movementHandler(-0.65D);
@@ -613,14 +552,6 @@ public class BoatHandler {
 
 	public Vector getPreviousMotion() {
 		return previousMotion;
-	}
-
-	public void setThrottleChanged(boolean throttleChanged) {
-		this.throttleChanged = throttleChanged;
-	}
-
-	public boolean isThrottleChanged() {
-		return throttleChanged;
 	}
 
 	public void setRotationMultipler(double rotationMultipler) {
