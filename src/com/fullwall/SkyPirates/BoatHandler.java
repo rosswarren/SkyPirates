@@ -56,6 +56,7 @@ public class BoatHandler {
 	private boolean goingDown = false;
 	private boolean goingUp = false;
 	private boolean firstRun = true;
+	private boolean fast = false;
 
 	private final double DOWNWARD_DRIFT = -0.037999998673796664D;
 	private final double COMPENSATION = 0.0379999999999999999999999999999999999999999999D;
@@ -65,11 +66,13 @@ public class BoatHandler {
 	public BoatHandler(Boat newBoat, Modes newMode, int ID) {
 		boat = newBoat;
 		boat.setMaxSpeed(maxSpeed);
+		boat.setWorkOnLand(true);
 		mode = newMode;
 		entityID = ID;
 		cal = Calendar.getInstance();
 		setPreviousMotion(boat.getVelocity().clone());
 		setPreviousLocation(getLocation().toVector().clone());
+		
 		
 		wasMovingLastTick = isMoving();
 		
@@ -208,24 +211,6 @@ public class BoatHandler {
 		return;
 	}
 
-	private void changeThrottle(double change) {
-		throttle += change;
-		
-		if (throttle >= 15.0D) {
-			throttle = 15.0D;
-		} else if (throttle <= 0D) {
-			throttle = 0D;
-		}
-		
-		if (throttle != 1) {
-			setThrottleChanged(true);
-		} else {
-			setThrottleChanged(false);
-		}
-		
-		return;
-	}
-
 	public void doRealisticFriction() {
 		if (getPlayer() == null) {
 			setMotion(getMotionX() * 0.53774, getMotionY(), getMotionZ() * 0.53774);
@@ -237,7 +222,7 @@ public class BoatHandler {
 		double curZ = vel.getZ();
 		double newX = curX * factor;
 
-		if (Math.abs(newX) > maxSpeed) {
+	//	if (Math.abs(newX) > maxSpeed) {
 			if (newX < 0) {
 				newX = -maxSpeed;
 			} else {
@@ -255,11 +240,11 @@ public class BoatHandler {
 			}
 			this.setMotion(newX, vel.getY(), newZ);
 			return;
-		}
+	//	}
 		
-		double newZ = curZ * factor;
+		//double newZ = curZ * factor;
 		
-		if (Math.abs(newZ) > maxSpeed) {
+		/*if (Math.abs(newZ) > maxSpeed) {
 			if (newZ < 0) {
 				newZ = -maxSpeed;
 			} else {
@@ -279,13 +264,13 @@ public class BoatHandler {
 			
 			return;
 		}
-		this.setMotion(newX, vel.getY(), newZ);
+		this.setMotion(newX, vel.getY(), newZ);*/
 	}
 
 	public void movementHandler(Vector vel) {
 		Vector newvel = boat.getVelocity();
 		
-		if (throttle != 1) {
+		if (fast) {
 			speedUpBoat(throttle, newvel);
 		}
 		
@@ -321,7 +306,6 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if (!isAttacking && mode != Modes.GLIDER && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			changeThrottle(1.0);
 			getPlayer().sendMessage(ChatColor.YELLOW + "The boat " + ChatColor.DARK_RED + "speeds up." + ChatColor.YELLOW + " Your speed is now " + throttle + "x of its original.");
 		} else {
 			// movementHandler(0.5D);
@@ -355,8 +339,16 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if (getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			changeThrottle(-0.25D);
-			getPlayer().sendMessage(ChatColor.BLUE + "The boat slows. Your speed is now " + throttle + "x of its original.");
+			
+			
+			if (!getPlayer().isSneaking()) {
+				fast = !fast;
+				
+				if (fast) getPlayer().sendMessage(ChatColor.BLUE + "Fast mode engaged");
+				else getPlayer().sendMessage(ChatColor.BLUE + "Fast mode disengaged");
+			}
+			
+			
 		} else if (getItemInHandID() == 262 && p.hasPermission("skypirates.items.arrow")) {
 			getPlayer().shootArrow();
 		} else if (mode == Modes.PLANE && getItemInHandID() == 46 & p.hasPermission("skypirates.items.tnt")) {

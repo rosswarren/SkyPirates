@@ -5,6 +5,7 @@ import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
@@ -13,6 +14,13 @@ public class PlayerListen extends PlayerListener {
 
 	public PlayerListen(SkyPirates plugin) {
 		this.plugin = plugin;
+	}
+	
+	@Override
+	public void onPlayerKick(PlayerKickEvent event){
+		if (event.getReason().equals("You moved too quickly :( (Hacking?)")) {
+			event.setCancelled(true);
+		}
 	}
 
 	/**

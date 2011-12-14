@@ -140,6 +140,7 @@ public class SkyPirates extends JavaPlugin {
 		pluginManager.registerEvent(Event.Type.VEHICLE_DAMAGE, vehicleListen, Priority.Normal, this);
 		pluginManager.registerEvent(Event.Type.PLAYER_INTERACT, playerListen, Priority.Normal, this);
 		pluginManager.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListen, Priority.Normal, this);
+		pluginManager.registerEvent(Event.Type.PLAYER_KICK, playerListen, Priority.Normal, this);
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
