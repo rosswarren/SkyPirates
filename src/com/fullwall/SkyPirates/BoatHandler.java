@@ -40,8 +40,7 @@ public class BoatHandler {
 	
 	private int entityID = 0;
 	private long delay = 0;
-	private boolean isAttacking = false;
-
+	
 	// 1E308 - max possible floating point value;
 	private final double maxMomentum = 10D;
 	private double rotationMultipler = 0D;
@@ -251,34 +250,29 @@ public class BoatHandler {
 	public void doArmSwing() {
 		Player p = getPlayer();
 		
-		if (!isAttacking && mode != Modes.GLIDER && getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			// no left hand action for diamond currently
-		} else {
-			// movementHandler(0.5D);
-			if ((mode == Modes.NORMAL) && delay == 0) {
-				if (getItemInHandID() == 263 && p.hasPermission("skypirates.items.coal")) {
-					movementHandler(0.75D);
-					delay = cal.getTimeInMillis() + 750;
-				} else {
-					movementHandler(0.5D);
-					delay = cal.getTimeInMillis();
-				}
-			} else if (mode == Modes.PLANE) {
-				if (getItemInHandID() == 263 && p.hasPermission("skypirates.items.coal")) {
-					goingUp = true;
-					movementHandler(0.5D);
-				} else {
-					goingUp = true;
-					movementHandler(0.5D);
-				}
-			} else if (mode == Modes.SUBMARINE) {
-				goingUp = true;
-				movementHandler(0.1D);
-			} else if (mode == Modes.GLIDER && (getBlockIdBeneath() != 8 && getBlockIdBeneath() != 9)) {
-				speedUpBoat(10, boat.getVelocity());
+		// movementHandler(0.5D);
+		if ((mode == Modes.NORMAL) && delay == 0) {
+			if (getItemInHandID() == 263 && p.hasPermission("skypirates.items.coal")) {
+				movementHandler(0.75D);
+				delay = cal.getTimeInMillis() + 750;
+			} else {
+				movementHandler(0.5D);
+				delay = cal.getTimeInMillis();
 			}
+		} else if (mode == Modes.PLANE) {
+			if (getItemInHandID() == 263 && p.hasPermission("skypirates.items.coal")) {
+				goingUp = true;
+				movementHandler(0.5D);
+			} else {
+				goingUp = true;
+				movementHandler(0.5D);
+			}
+		} else if (mode == Modes.SUBMARINE) {
+			goingUp = true;
+			movementHandler(0.1D);
+		} else if (mode == Modes.GLIDER && (getBlockIdBeneath() != 8 && getBlockIdBeneath() != 9)) {
+			speedUpBoat(10, boat.getVelocity());
 		}
-		isAttacking = false;
 	}
 
 	public void doRightClick() {
@@ -455,9 +449,9 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if ((getItemInHandID() == 263) && p.hasPermission("skypirates.items.coal")) {
-			MAX_HOVER_HEIGHT = 2;
+			MAX_HOVER_HEIGHT = 4;
 		} else {
-			MAX_HOVER_HEIGHT = 1;
+			MAX_HOVER_HEIGHT = 2;
 		}
 
 		int x = boat.getLocation().getBlockX();

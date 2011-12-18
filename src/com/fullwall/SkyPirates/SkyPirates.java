@@ -20,8 +20,6 @@ import com.fullwall.SkyPirates.BoatHandler.Modes;
 
 /**
  * SkyPirates for Bukkit
- * 
- * @author fullwall
  */
 public class SkyPirates extends JavaPlugin {
 	public VehicleListen vehicleListen = new VehicleListen(this);
@@ -59,8 +57,6 @@ public class SkyPirates extends JavaPlugin {
 	}
 
 	public static SkyPirates plugin;
-
-	private static final String codename = "Frodo";
 	public static Logger log = Logger.getLogger("Minecraft");
 
 	@Override
@@ -124,6 +120,7 @@ public class SkyPirates extends JavaPlugin {
 			p.sendMessage(ChatColor.GREEN + "drill|d - " + ChatColor.AQUA + "turns your boat into a drill.");
 			p.sendMessage(ChatColor.GREEN + "anything else - " + ChatColor.AQUA + "turns your boat back into the regular old jumping variety.");
 			p.sendMessage(ChatColor.YELLOW + "---------------------");
+			p.sendMessage(ChatColor.AQUA + "If you are stuck, contact rosswarren4@gmail.com for help.");
 			break;
 		}
 		
@@ -144,14 +141,14 @@ public class SkyPirates extends JavaPlugin {
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] (" + codename + ") loaded");
+		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] loaded");
 
 	}
 
 	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] (" + codename + ") disabled");
+		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] disabled");
 	}
 
 	@Override
