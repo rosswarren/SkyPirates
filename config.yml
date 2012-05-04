@@ -2,6 +2,8 @@ strings:
   no-permission: You don't have permission to use that command.
   no-boats: There are no SkyPirates boats to remove.
   not-in-boat: You are not in a boat.
+  enter: You feel a tingling sensation as you step into the boat.
+  exit: The tingling disappears as you hop out.
   stop: The boat stops with a sudden jolt.
   plane: The boat feels suddenly weightless, like a breath of wind would carry you away!
   submarine: You feel the boat getting heavier and heavier as you sink beneath the waves.
@@ -9,6 +11,5 @@ strings:
   glider: The boat prepares to float gently downwards.
   drill: The boat feels like it has immense force behind it, enough to drill through solid earth.
   normal: The boat is just that, an ordinary vehicle.
-  
-  
-  
+options:
+  destroy-boat-on-exit: false

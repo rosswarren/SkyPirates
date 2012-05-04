@@ -28,6 +28,7 @@ public class SkyPirates extends JavaPlugin {
 	public static HashMap<Player, Modes> playerModes = new HashMap<Player, Modes>();
 	public static HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
 	public static ArrayList<String> helmets = new ArrayList<String>();
+	Boolean destroyBoatsOnExit;
 	
 	public HashMap<String, String> strings;
 	
@@ -42,7 +43,9 @@ public class SkyPirates extends JavaPlugin {
 		DRILL,
 		NORMAL,
 		HELP,
-		STOP
+		STOP,
+		ENTER,
+		EXIT
 	}
 	
 	public enum Commands {
@@ -96,6 +99,13 @@ public class SkyPirates extends JavaPlugin {
 			break;
 		case STOP:
 			text = ChatColor.DARK_RED + strings.get("stop");
+			break;
+		case ENTER:
+			text = ChatColor.AQUA + strings.get("enter");
+			break;
+		case EXIT:
+			text = ChatColor.LIGHT_PURPLE + strings.get("exit");
+			break;
 		case HELP:
 			p.sendMessage(ChatColor.AQUA + "SkyPirates Modes List");
 			p.sendMessage(ChatColor.YELLOW + "---------------------");
@@ -136,7 +146,7 @@ public class SkyPirates extends JavaPlugin {
 		// reload the config in memory
 		this.reloadConfig();
 		
-		loadStrings();
+		loadConfiguration();
 		
 		
 		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] loaded");
@@ -146,18 +156,29 @@ public class SkyPirates extends JavaPlugin {
 	/**
 	 * Load the strings from the configuration file, so that they can be customised
 	 */
-	private void loadStrings() {
+	private void loadConfiguration() {
 		this.strings = new HashMap<String, String>();
 		
 		// get the strings section
-		MemorySection section = (MemorySection) this.getConfig().get("strings");
+		MemorySection stringSection = (MemorySection) this.getConfig().get("strings");
 		
 		// get all the keys, (the string names)
-		Set<String> keys = section.getKeys(false);
+		Set<String> keys = stringSection.getKeys(false);
 		
 		// load all the strings to the hashmap from the configuration yaml file
 		for(String key: keys) {
-			this.strings.put(key, section.getString(key));
+			this.strings.put(key, stringSection.getString(key));
+		}
+		
+		
+		MemorySection optionsSection = (MemorySection) this.getConfig().get("options");
+		
+		String answer = optionsSection.getString("destroy-boat-on-exit");
+		
+		if (answer.contains("t")) {
+			this.destroyBoatsOnExit = true;
+		} else {
+			this.destroyBoatsOnExit = false;
 		}
 	}
 

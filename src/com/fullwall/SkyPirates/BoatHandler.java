@@ -74,6 +74,14 @@ public class BoatHandler {
 		
 		SkyPirates.boats.put(boat.getEntityId(), this);
 	}
+	
+	/**
+	 * remove the boat
+	 */
+	public void destroy() {
+		boat.remove();
+		getPlayer().getInventory().addItem(new ItemStack(Material.BOAT, 1));
+	}
 
 	private double getYaw() {
 		return boat.getLocation().getYaw();

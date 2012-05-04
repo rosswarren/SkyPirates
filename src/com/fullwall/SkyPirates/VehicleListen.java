@@ -1,6 +1,5 @@
 package com.fullwall.SkyPirates;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
@@ -78,7 +77,7 @@ public class VehicleListen implements Listener {
 					
 				}
 				
-				player.sendMessage(ChatColor.AQUA + "You feel a tingling sensation as you step into the boat.");
+				this.plugin.sendMessage(player, SkyPirates.Messages.ENTER);
 				
 				boat.setMode(SkyPirates.playerModes.get(player));
 			}
@@ -93,8 +92,12 @@ public class VehicleListen implements Listener {
 		
 			BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
 			Player p = (Player) event.getExited();
-			p.sendMessage(ChatColor.LIGHT_PURPLE + "The tingling disappears as you hop out.");
+			this.plugin.sendMessage(p, SkyPirates.Messages.EXIT);
 			boat.setMode(Modes.NORMAL);
+			
+			if (this.plugin.destroyBoatsOnExit) {
+				boat.destroy();
+			}
 		}
 	}
 
