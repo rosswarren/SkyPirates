@@ -8,8 +8,7 @@ import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -130,14 +129,10 @@ public class SkyPirates extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		PluginManager pluginManager = getServer().getPluginManager();
-		pluginManager.registerEvent(Event.Type.VEHICLE_COLLISION_BLOCK, vehicleListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.VEHICLE_ENTER, vehicleListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.VEHICLE_EXIT, vehicleListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.VEHICLE_DAMAGE, vehicleListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.PLAYER_INTERACT, playerListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListen, Priority.Normal, this);
-		pluginManager.registerEvent(Event.Type.PLAYER_KICK, playerListen, Priority.Normal, this);
+		
+		pluginManager.registerEvents((Listener) new VehicleListen(this), this);
+		pluginManager.registerEvents((Listener) new PlayerListen(this), this);
+
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();

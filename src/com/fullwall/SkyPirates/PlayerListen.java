@@ -3,20 +3,22 @@ package com.fullwall.SkyPirates;
 import org.bukkit.Material;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-public class PlayerListen extends PlayerListener {
+public class PlayerListen implements Listener {
 	public SkyPirates plugin;
 
 	public PlayerListen(SkyPirates plugin) {
 		this.plugin = plugin;
 	}
 	
-	@Override
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerKick(PlayerKickEvent event){
 		if (event.getReason().equals("You moved too quickly :( (Hacking?)")) {
 			event.setCancelled(true);
@@ -26,7 +28,7 @@ public class PlayerListen extends PlayerListener {
 	/**
 	 * Called when a player interacts with an object or air. 
 	 */
-	@Override
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.hasBlock() && event.getClickedBlock().getType() == Material.BOAT) {
 			return;
@@ -52,6 +54,7 @@ public class PlayerListen extends PlayerListener {
 			boat.doArmSwing();
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL)
 	public static boolean checkBoats(Boat boat) {
 		if (SkyPirates.boats != null && SkyPirates.boats.get(boat.getEntityId()) != null) {
 			return true;
@@ -60,7 +63,7 @@ public class PlayerListen extends PlayerListener {
 		return false;
 	}
 	
-	@Override
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
 		Player p = event.getPlayer();
 		

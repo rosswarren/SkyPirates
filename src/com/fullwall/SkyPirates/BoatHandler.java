@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -279,19 +280,19 @@ public class BoatHandler {
 		Player p = getPlayer();
 		
 		if (getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
-			if (!getPlayer().isSneaking()) {
+			if (!p.isSneaking()) {
 				speedUpBoat(10, boat.getVelocity());
-				getPlayer().sendMessage(ChatColor.BLUE + "Boost!");
+				p.sendMessage(ChatColor.BLUE + "Boost!");
 			}
 		} else if (getItemInHandID() == 262 && p.hasPermission("skypirates.items.arrow")) {
-			getPlayer().shootArrow();
+			p.launchProjectile(Arrow.class);
 		} else if (mode == Modes.PLANE && getItemInHandID() == 46 & p.hasPermission("skypirates.items.tnt")) {
-			Item item = getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), new ItemStack(Material.TNT, 1));
+			Item item = getPlayer().getWorld().dropItemNaturally(p.getLocation(), new ItemStack(Material.TNT, 1));
 			Timer t = new Timer();
 			t.schedule(new DropTNT(item), 1000);
 		} else if (getItemInHandID() == 80 && p.hasPermission("skypirates.items.snowblock")) {
 			stopBoat();
-			getPlayer().sendMessage(ChatColor.DARK_RED + "The boat stops with a sudden jolt.");
+			p.sendMessage(ChatColor.DARK_RED + "The boat stops with a sudden jolt.");
 		} else if (mode == Modes.PLANE) {
 			goingDown = true;
 			movementHandler(-0.65D);
