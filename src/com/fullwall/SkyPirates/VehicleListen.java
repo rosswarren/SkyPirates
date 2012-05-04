@@ -1,6 +1,8 @@
 package com.fullwall.SkyPirates;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -127,9 +129,30 @@ public class VehicleListen implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
+		
 		if (event.getVehicle() instanceof Boat &&
-				event.getVehicle().getPassenger() instanceof Player) {
-			event.getVehicle().teleport(event.getVehicle().getPassenger());
+			event.getVehicle().getPassenger() instanceof Player) {
+			
+			BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
+			
+			if (boat.getMode() == BoatHandler.Modes.ICEBREAKER) {
+		        float r2 = 2.0F;
+		        int r = 2;
+		        
+		        for (int i = -r; i <= r; i++) {
+		            for (int j = -r; j <= r; j++) {
+		                if (i * i + j * j > r2 * r2) {
+		                    continue;
+		                }
+		                
+		                Block block = event.getBlock().getRelative(i, 0, j);
+		                
+		                if (block.getType().equals(Material.ICE)) {
+		                    block.setType(Material.WATER);
+		                }
+		            }
+		        }
+			}
 		}
 	}
 

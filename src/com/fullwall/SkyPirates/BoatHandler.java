@@ -25,7 +25,8 @@ public class BoatHandler {
 		SUBMARINE,
 		HOVER,
 		GLIDER,
-		DRILL
+		DRILL,
+		ICEBREAKER
 	}
 	
 	public final Boat boat;
@@ -181,6 +182,10 @@ public class BoatHandler {
 
 	public void setMode(Modes newMode) {
 		mode = newMode;
+	}
+	
+	public Modes getMode() {
+		return mode;
 	}
 
 	public void updateCalendar() {

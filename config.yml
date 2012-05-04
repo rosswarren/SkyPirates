@@ -10,6 +10,7 @@ strings:
   hover: The boat lifts into the air, hovering over the world below.
   glider: The boat prepares to float gently downwards.
   drill: The boat feels like it has immense force behind it, enough to drill through solid earth.
+  icebreaker: The boats hull hardens, enabling it to smash through ice.
   normal: The boat is just that, an ordinary vehicle.
 options:
   destroy-boat-on-exit: false

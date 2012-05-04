@@ -41,6 +41,7 @@ public class SkyPirates extends JavaPlugin {
 		HOVER,
 		GLIDER,
 		DRILL,
+		ICEBREAKER,
 		NORMAL,
 		HELP,
 		STOP,
@@ -55,7 +56,8 @@ public class SkyPirates extends JavaPlugin {
 		PLANE,
 		HOVER,
 		GLIDER,
-		DRILL
+		DRILL,
+		ICEBREAKER
 	}
 
 	public static SkyPirates plugin;
@@ -94,6 +96,9 @@ public class SkyPirates extends JavaPlugin {
 		case DRILL:
 			text = ChatColor.DARK_GRAY + strings.get("drill");
 			break;
+		case ICEBREAKER:
+			text = ChatColor.DARK_GRAY + strings.get("icebreaker");
+			break;
 		case NORMAL:
 			text = ChatColor.GRAY +  strings.get("normal");
 			break;
@@ -114,6 +119,7 @@ public class SkyPirates extends JavaPlugin {
 			p.sendMessage(ChatColor.GREEN + "hoverboat|h - " + ChatColor.AQUA + "turns your boat into a hoverboat.");
 			p.sendMessage(ChatColor.GREEN + "glider|g - " + ChatColor.AQUA + "turns your boat into a glider.");
 			p.sendMessage(ChatColor.GREEN + "drill|d - " + ChatColor.AQUA + "turns your boat into a drill.");
+			p.sendMessage(ChatColor.GREEN + "icebreaker|ice|i - " + ChatColor.AQUA + "turns your boat into an icebreaker.");
 			p.sendMessage(ChatColor.GREEN + "anything else - " + ChatColor.AQUA + "turns your boat back into the regular old jumping variety.");
 			p.sendMessage(ChatColor.YELLOW + "---------------------");
 			p.sendMessage(ChatColor.AQUA + "If you are stuck, contact rosswarren4@gmail.com for help.");
@@ -245,16 +251,6 @@ public class SkyPirates extends JavaPlugin {
 			return true;
 		}
 		
-		ArrayList<String> string = new ArrayList<String>();
-		string.add("p");
-		string.add("s");
-		string.add("g");
-		string.add("d");
-		string.add("h");
-		
-		if (!string.contains("" + option.charAt(0))) {
-			return false;
-		}
 		
 		if (!player.isInsideVehicle()) {
 			sendMessage(player, Messages.NOT_IN_BOAT);
@@ -305,6 +301,14 @@ public class SkyPirates extends JavaPlugin {
 				sendMessage(player, Messages.DRILL);
 				SkyPirates.playerModes.put(player, Modes.DRILL);
 				boat.setMode(Modes.DRILL);
+			} else {
+				sendMessage(player, Messages.NO_PERMISSION);
+			}
+		} else if (option.contains("ice") || option.equals("i")) {
+			if (player.hasPermission("skypirates.modes.icebreaker")) {
+				sendMessage(player, Messages.ICEBREAKER);
+				SkyPirates.playerModes.put(player, Modes.ICEBREAKER);
+				boat.setMode(Modes.ICEBREAKER);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
