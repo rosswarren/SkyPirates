@@ -276,7 +276,7 @@ public class BoatHandler {
 		}
 	}
 
-	public void doRightClick() {
+	public void doRightClick(SkyPirates skyPirates) {
 		Player p = getPlayer();
 		
 		if (getItemInHandID() == 264 && p.hasPermission("skypirates.items.diamond")) {
@@ -292,7 +292,7 @@ public class BoatHandler {
 			t.schedule(new DropTNT(item), 1000);
 		} else if (getItemInHandID() == 80 && p.hasPermission("skypirates.items.snowblock")) {
 			stopBoat();
-			p.sendMessage(ChatColor.DARK_RED + "The boat stops with a sudden jolt.");
+			skyPirates.sendMessage(p, SkyPirates.Messages.STOP);
 		} else if (mode == Modes.PLANE) {
 			goingDown = true;
 			movementHandler(-0.65D);

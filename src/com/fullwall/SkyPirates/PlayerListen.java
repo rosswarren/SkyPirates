@@ -48,7 +48,7 @@ public class PlayerListen implements Listener {
 		BoatHandler boat = getBoatHandler((Boat) p.getVehicle());
 		
 		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
-			boat.doRightClick();
+			boat.doRightClick(this.plugin);
 		
 		else if (boat.getDelay() == 0)
 			boat.doArmSwing();
@@ -78,7 +78,7 @@ public class PlayerListen implements Listener {
 		
 		BoatHandler boat = getBoatHandler((Boat) p.getVehicle());
 		
-		boat.doRightClick();
+		boat.doRightClick(this.plugin);
 	}
 	
 

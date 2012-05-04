@@ -3,11 +3,13 @@ package com.fullwall.SkyPirates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -27,22 +29,20 @@ public class SkyPirates extends JavaPlugin {
 	public static HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
 	public static ArrayList<String> helmets = new ArrayList<String>();
 	
+	public HashMap<String, String> strings;
+	
 	public enum Messages {
 		NO_PERMISSION,
-		NO_BOATS_TO_REMOVE,
+		NO_BOATS,
 		NOT_IN_BOAT,
 		PLANE,
-		PLANE_NO_PERMISSION,
 		SUBMARINE,
-		SUBMARINE_NO_PERMISSION,
 		HOVER,
-		HOVER_NO_PERMISSION,
 		GLIDER,
-		GLIDER_NO_PERMISSION,
 		DRILL,
-		DRILL_NO_PERMISSION,
 		NORMAL,
-		HELP
+		HELP,
+		STOP
 	}
 	
 	public enum Commands {
@@ -68,47 +68,34 @@ public class SkyPirates extends JavaPlugin {
 		
 		switch (message) {
 		case NO_PERMISSION:
-			text = ChatColor.RED + "You don't have permission to use that command.";
+			text = ChatColor.RED + strings.get("no-permission");
 			break;
-		case NO_BOATS_TO_REMOVE:
-			text = ChatColor.GRAY + "There are no SkyPirates boats to remove.";
+		case NO_BOATS:
+			text = ChatColor.GRAY + strings.get("no-boats");
 			break;
 		case NOT_IN_BOAT:
-			text = ChatColor.RED + "You are not in a boat.";
+			text = ChatColor.RED + strings.get("not-in-boat");
 			break;
 		case PLANE:
-			text = ChatColor.GREEN + "The boat feels suddenly weightless, like a breath of wind would carry you away!";
-			break;
-		case PLANE_NO_PERMISSION:
-			text = ChatColor.RED + "As much as you will it to float, the boat remains stubbornly on the ground.";
+			text = ChatColor.GREEN + strings.get("plane");
 			break;
 		case SUBMARINE:
-			text = ChatColor.BLUE + "You feel the boat getting heavier and heavier as you sink beneath the waves.";
-			break;
-		case SUBMARINE_NO_PERMISSION:
-			text = ChatColor.RED + "As hard as you try, the boat refuses to sink below the water.";
+			text = ChatColor.BLUE + strings.get("submarine");
 			break;
 		case HOVER:
-			text = ChatColor.GOLD + "The boat lifts into the air, hovering over the world below.";
-			break;
-		case HOVER_NO_PERMISSION:
-			text = ChatColor.RED + "The boat retains its usual weight.";
+			text = ChatColor.GOLD + strings.get("hover");
 			break;
 		case GLIDER:
-			text = ChatColor.WHITE + "The boat prepares to float gently downwards.";
-			break;
-		case GLIDER_NO_PERMISSION:
-			text = ChatColor.RED + "The boat retains its usual weight.";
+			text = ChatColor.GOLD + strings.get("glider");
 			break;
 		case DRILL:
-			text = ChatColor.DARK_GRAY + "The boat feels like it has immense force behind it, enough to drill through solid earth.";
-			break;
-		case DRILL_NO_PERMISSION:
-			text = ChatColor.RED + "The boat retains its usual strength.";
+			text = ChatColor.DARK_GRAY + strings.get("drill");
 			break;
 		case NORMAL:
-			text = ChatColor.GRAY + "The boat is just that, an ordinary vehicle.";
+			text = ChatColor.GRAY +  strings.get("normal");
 			break;
+		case STOP:
+			text = ChatColor.DARK_RED + strings.get("stop");
 		case HELP:
 			p.sendMessage(ChatColor.AQUA + "SkyPirates Modes List");
 			p.sendMessage(ChatColor.YELLOW + "---------------------");
@@ -126,18 +113,52 @@ public class SkyPirates extends JavaPlugin {
 		p.sendMessage(text);
 	}
 
+	// runs when the plugin is loaded
 	@Override
 	public void onEnable() {
 		PluginManager pluginManager = getServer().getPluginManager();
 		
+		// register listeners so that they can handle events
 		pluginManager.registerEvents((Listener) new VehicleListen(this), this);
 		pluginManager.registerEvents((Listener) new PlayerListen(this), this);
 
 		populateHelmets();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
+		
+		// In certain cases if you wish to append new defaults to an existing config.yml you can set the option copyDefaults to true
+		this.getConfig().options().copyDefaults(true);
+		
+		// Should copy config.yml to the users files so that they can config things
+		// http://wiki.bukkit.org/Introduction_to_the_New_Configuration
+		this.saveDefaultConfig();
+		
+		// reload the config in memory
+		this.reloadConfig();
+		
+		loadStrings();
+		
+		
 		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] loaded");
 
+	}
+	
+	/**
+	 * Load the strings from the configuration file, so that they can be customised
+	 */
+	private void loadStrings() {
+		this.strings = new HashMap<String, String>();
+		
+		// get the strings section
+		MemorySection section = (MemorySection) this.getConfig().get("strings");
+		
+		// get all the keys, (the string names)
+		Set<String> keys = section.getKeys(false);
+		
+		// load all the strings to the hashmap from the configuration yaml file
+		for(String key: keys) {
+			this.strings.put(key, section.getString(key));
+		}
 	}
 
 	@Override
@@ -175,7 +196,7 @@ public class SkyPirates extends JavaPlugin {
 		if (option.equals("clear") || option.equals("c")) {
 			if (player.hasPermission("skypirates.admin.clear")) {
 				if (SkyPirates.boats.isEmpty()) {
-					sendMessage(player, Messages.NO_BOATS_TO_REMOVE);
+					sendMessage(player, Messages.NO_BOATS);
 					return true;
 				}
 				
@@ -232,7 +253,7 @@ public class SkyPirates extends JavaPlugin {
 				playerModes.put(player, Modes.PLANE);
 				boat.setMode(Modes.PLANE);
 			} else {
-				sendMessage(player, Messages.PLANE_NO_PERMISSION);
+				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.equals("s") || option.contains("sub")) {
 			if (player.hasPermission("skypirates.modes.submarine")) {
@@ -240,7 +261,7 @@ public class SkyPirates extends JavaPlugin {
 				sendMessage(player, Messages.SUBMARINE);
 				boat.setMode(Modes.SUBMARINE);
 			} else {
-				sendMessage(player, Messages.SUBMARINE_NO_PERMISSION);
+				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("hover") || option.equals("h")) {
 			if (player.hasPermission("skypirates.modes.hoverboat")) {
@@ -248,7 +269,7 @@ public class SkyPirates extends JavaPlugin {
 				SkyPirates.playerModes.put(player, Modes.HOVER);
 				boat.setMode(Modes.HOVER);
 			} else {
-				sendMessage(player, Messages.HOVER_NO_PERMISSION);
+				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("glider") || option.equals("g")) {
 			if (player.hasPermission("skypirates.modes.glider")) {
@@ -256,7 +277,7 @@ public class SkyPirates extends JavaPlugin {
 				SkyPirates.playerModes.put(player, Modes.GLIDER);
 				boat.setMode(Modes.GLIDER);
 			} else {
-				sendMessage(player, Messages.GLIDER_NO_PERMISSION);
+				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("drill") || option.equals("d")) {
 			if (player.hasPermission("skypirates.modes.drill")) {
@@ -264,7 +285,7 @@ public class SkyPirates extends JavaPlugin {
 				SkyPirates.playerModes.put(player, Modes.DRILL);
 				boat.setMode(Modes.DRILL);
 			} else {
-				sendMessage(player, Messages.DRILL_NO_PERMISSION);
+				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else {
 			sendMessage(player, Messages.NORMAL);

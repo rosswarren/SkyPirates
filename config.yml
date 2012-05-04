@@ -1,0 +1,14 @@
+strings:
+  no-permission: You don't have permission to use that command.
+  no-boats: There are no SkyPirates boats to remove.
+  not-in-boat: You are not in a boat.
+  stop: The boat stops with a sudden jolt.
+  plane: The boat feels suddenly weightless, like a breath of wind would carry you away!
+  submarine: You feel the boat getting heavier and heavier as you sink beneath the waves.
+  hover: The boat lifts into the air, hovering over the world below.
+  glider: The boat prepares to float gently downwards.
+  drill: The boat feels like it has immense force behind it, enough to drill through solid earth.
+  normal: The boat is just that, an ordinary vehicle.
+  
+  
+  
