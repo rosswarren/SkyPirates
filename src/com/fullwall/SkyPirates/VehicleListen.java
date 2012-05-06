@@ -66,13 +66,9 @@ public class VehicleListen implements Listener {
 			
 			if  (event.getVehicle() instanceof Boat && player.hasPermission("skypirates.player.enable")) {
 				BoatHandler boat;
-		
-				if ((SkyPirates.playerModes.get(player) == null)) {
-					SkyPirates.playerModes.put(player, Modes.NORMAL);
-				}
-				
+
 				if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) {
-					boat = new BoatHandler((Boat) event.getVehicle(), SkyPirates.playerModes.get(player), event.getVehicle().getEntityId());
+					boat = new BoatHandler((Boat) event.getVehicle(), Modes.NORMAL, event.getVehicle().getEntityId());
 					SkyPirates.boats.put(boat.getEntityId(), boat);
 				} else {
 					boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
@@ -81,7 +77,7 @@ public class VehicleListen implements Listener {
 				
 				this.plugin.sendMessage(player, SkyPirates.Messages.ENTER);
 				
-				boat.setMode(SkyPirates.playerModes.get(player));
+				boat.setMode(Modes.NORMAL);
 			}
 		}
 	}
@@ -97,7 +93,7 @@ public class VehicleListen implements Listener {
 			this.plugin.sendMessage(p, SkyPirates.Messages.EXIT);
 			boat.setMode(Modes.NORMAL);
 			
-			if (this.plugin.destroyBoatsOnExit) {
+			if (this.plugin.getDestroyBoatsOnExit()) {
 				boat.destroy();
 			}
 		}
@@ -129,34 +125,49 @@ public class VehicleListen implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
-		
+		// check that the vehicle is a boat and that the passenger is a player
 		if (event.getVehicle() instanceof Boat &&
 			event.getVehicle().getPassenger() instanceof Player) {
 			
 			BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
 			
+			// handle ice breaker stuff
 			if (boat.getMode() == BoatHandler.Modes.ICEBREAKER) {
-		        float r2 = 2.0F;
-		        int r = 2;
+		        Block block = event.getBlock();
 		        
-		        for (int i = -r; i <= r; i++) {
-		            for (int j = -r; j <= r; j++) {
-		                if (i * i + j * j > r2 * r2) {
-		                    continue;
-		                }
-		                
-		                Block block = event.getBlock().getRelative(i, 0, j);
-		                
-		                if (block.getType().equals(Material.ICE)) {
-		                    block.setType(Material.WATER);
-		                }
-		            }
-		        }
+		        breakIce(block, 2);
 			}
 		}
 	}
-
-	public SkyPirates getPlugin() {
-		return plugin;
+	
+	/**
+	 * Converts ice to water for the radius around the given block
+	 * This method runs immediately
+	 * 
+	 * @param centreBlock	The point at which to break ice around
+	 * @param radius		The radius at which to break ice around
+	 */
+	private void breakIce(Block centreBlock, int radius) {
+        
+        // iterate the x axis
+        for (int x = -radius; x <= radius; x++) {
+        	
+        	// iterate the z axis
+            for (int z = -radius; z <= radius; z++) {
+            	
+            	// if it is too far away, don't convert
+                if (x * x + z * z > radius * radius) {
+                    continue;
+                }
+                
+                // get the block
+                Block block = centreBlock.getRelative(x, 0, z);
+                
+                // convert to water if it is ice
+                if (block.getType().equals(Material.ICE)) {
+                    block.setType(Material.WATER);
+                }
+            }
+        }
 	}
 }

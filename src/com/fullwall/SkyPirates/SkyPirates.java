@@ -23,12 +23,9 @@ import com.fullwall.SkyPirates.BoatHandler.Modes;
  * SkyPirates for Bukkit
  */
 public class SkyPirates extends JavaPlugin {
-	public VehicleListen vehicleListen = new VehicleListen(this);
-	public PlayerListen playerListen = new PlayerListen(this);
-	public static HashMap<Player, Modes> playerModes = new HashMap<Player, Modes>();
 	public static HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
 	public static ArrayList<String> helmets = new ArrayList<String>();
-	Boolean destroyBoatsOnExit;
+	private Boolean destroyBoatsOnExit;
 	
 	public HashMap<String, String> strings;
 	
@@ -66,6 +63,10 @@ public class SkyPirates extends JavaPlugin {
 	@Override
 	public void onLoad() {
 
+	}
+	
+	public Boolean getDestroyBoatsOnExit() {
+		return this.destroyBoatsOnExit;
 	}
 	
 	public void sendMessage(Player p, Messages message) {
@@ -267,14 +268,12 @@ public class SkyPirates extends JavaPlugin {
 		if (option.equals("p") || option.equals("plane")) {
 			if (player.hasPermission("skypirates.modes.plane")) {
 				sendMessage(player, Messages.PLANE);
-				playerModes.put(player, Modes.PLANE);
 				boat.setMode(Modes.PLANE);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.equals("s") || option.contains("sub")) {
 			if (player.hasPermission("skypirates.modes.submarine")) {
-				playerModes.put(player, Modes.SUBMARINE);
 				sendMessage(player, Messages.SUBMARINE);
 				boat.setMode(Modes.SUBMARINE);
 			} else {
@@ -283,7 +282,6 @@ public class SkyPirates extends JavaPlugin {
 		} else if (option.contains("hover") || option.equals("h")) {
 			if (player.hasPermission("skypirates.modes.hoverboat")) {
 				sendMessage(player, Messages.HOVER);
-				SkyPirates.playerModes.put(player, Modes.HOVER);
 				boat.setMode(Modes.HOVER);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
@@ -291,7 +289,6 @@ public class SkyPirates extends JavaPlugin {
 		} else if (option.contains("glider") || option.equals("g")) {
 			if (player.hasPermission("skypirates.modes.glider")) {
 				sendMessage(player, Messages.GLIDER);
-				SkyPirates.playerModes.put(player, Modes.GLIDER);
 				boat.setMode(Modes.GLIDER);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
@@ -299,7 +296,6 @@ public class SkyPirates extends JavaPlugin {
 		} else if (option.contains("drill") || option.equals("d")) {
 			if (player.hasPermission("skypirates.modes.drill")) {
 				sendMessage(player, Messages.DRILL);
-				SkyPirates.playerModes.put(player, Modes.DRILL);
 				boat.setMode(Modes.DRILL);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
@@ -307,14 +303,12 @@ public class SkyPirates extends JavaPlugin {
 		} else if (option.contains("ice") || option.equals("i")) {
 			if (player.hasPermission("skypirates.modes.icebreaker")) {
 				sendMessage(player, Messages.ICEBREAKER);
-				SkyPirates.playerModes.put(player, Modes.ICEBREAKER);
 				boat.setMode(Modes.ICEBREAKER);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else {
 			sendMessage(player, Messages.NORMAL);
-			SkyPirates.playerModes.put(player, Modes.NORMAL);
 			boat.setMode(Modes.NORMAL);
 			boat.resetValues();
 		}
