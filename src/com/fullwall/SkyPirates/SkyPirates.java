@@ -1,6 +1,5 @@
 package com.fullwall.SkyPirates;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -23,8 +22,7 @@ import com.fullwall.SkyPirates.BoatHandler.Modes;
  * SkyPirates for Bukkit
  */
 public class SkyPirates extends JavaPlugin {
-	public static HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
-	public static ArrayList<String> helmets = new ArrayList<String>();
+	private HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
 	private Boolean destroyBoatsOnExit;
 	
 	public HashMap<String, String> strings;
@@ -139,8 +137,6 @@ public class SkyPirates extends JavaPlugin {
 		pluginManager.registerEvents((Listener) new VehicleListen(this), this);
 		pluginManager.registerEvents((Listener) new PlayerListen(this), this);
 
-		populateHelmets();
-
 		PluginDescriptionFile pdfFile = this.getDescription();
 		
 		// In certain cases if you wish to append new defaults to an existing config.yml you can set the option copyDefaults to true
@@ -223,7 +219,7 @@ public class SkyPirates extends JavaPlugin {
 		
 		if (option.equals("clear") || option.equals("c")) {
 			if (player.hasPermission("skypirates.admin.clear")) {
-				if (SkyPirates.boats.isEmpty()) {
+				if (this.boats.isEmpty()) {
 					sendMessage(player, Messages.NO_BOATS);
 					return true;
 				}
@@ -258,12 +254,12 @@ public class SkyPirates extends JavaPlugin {
 			return true;
 		}
 		
-		if (!(player.getVehicle() instanceof Boat) && !(PlayerListen.checkBoats((Boat) player.getVehicle()))) {
+		if (!(player.getVehicle() instanceof Boat)) {
 			sendMessage(player, Messages.NOT_IN_BOAT);
 			return true;
 		}
 		
-		BoatHandler boat = PlayerListen.getBoatHandler((Boat) player.getVehicle());
+		BoatHandler boat = this.getBoat(((Boat) player.getVehicle()).getEntityId());
 		
 		if (option.equals("p") || option.equals("plane")) {
 			if (player.hasPermission("skypirates.modes.plane")) {
@@ -315,11 +311,12 @@ public class SkyPirates extends JavaPlugin {
 		
 		return false;
 	}
-
-	private void populateHelmets() {
-		helmets.add("298");
-		helmets.add("306");
-		helmets.add("310");
-		helmets.add("314");
+	
+	public BoatHandler getBoat(int id) {
+		return boats.get(id);
+	}
+	
+	public void setBoat(int id, BoatHandler handler) {
+		boats.put(id, handler);
 	}
 }

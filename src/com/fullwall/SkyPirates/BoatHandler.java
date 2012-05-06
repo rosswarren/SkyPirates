@@ -1,5 +1,6 @@
 package com.fullwall.SkyPirates;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Timer;
 
@@ -54,6 +55,7 @@ public class BoatHandler {
 	private boolean goingDown = false;
 	private boolean goingUp = false;
 	private boolean firstRun = true;
+	private ArrayList<String> helmets = new ArrayList<String>();
 
 	private final double DOWNWARD_DRIFT = -0.037999998673796664D;
 	private final double COMPENSATION = 0.0379999999999999999999999999999999999999999999D;
@@ -69,11 +71,9 @@ public class BoatHandler {
 		cal = Calendar.getInstance();
 		setPreviousMotion(boat.getVelocity().clone());
 		setPreviousLocation(getLocation().toVector().clone());
-		
+		populateHelmets();
 		
 		wasMovingLastTick = isMoving();
-		
-		SkyPirates.boats.put(boat.getEntityId(), this);
 	}
 	
 	/**
@@ -431,7 +431,7 @@ public class BoatHandler {
 		
 		// stop players from drowning underwater
 		if (p.getRemainingAir() != p.getMaximumAir()) {
-			if ((p.hasPermission("skypirates.player.air")) || ((SkyPirates.helmets.contains("" + getHelmetID()) && p.hasPermission("skypirates.items.helmets")))) {
+			if ((p.hasPermission("skypirates.player.air")) || ((helmets.contains(getHelmetID()) && p.hasPermission("skypirates.items.helmets")))) {
 				p.setRemainingAir(p.getMaximumAir());
 				p.setMaximumAir(p.getMaximumAir());
 			}
@@ -589,5 +589,11 @@ public class BoatHandler {
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}
-
+	
+	private void populateHelmets() {
+		helmets.add("298");
+		helmets.add("306");
+		helmets.add("310");
+		helmets.add("314");
+	}
 }

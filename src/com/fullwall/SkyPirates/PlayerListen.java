@@ -45,18 +45,19 @@ public class PlayerListen implements Listener {
 		if (!(checkBoats((Boat) p.getVehicle())))
 			return;
 		
-		BoatHandler boat = getBoatHandler((Boat) p.getVehicle());
+		BoatHandler boat = plugin.getBoat(((Boat) p.getVehicle()).getEntityId());
 		
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			boat.doRightClick(this.plugin);
-		
-		else if (boat.getDelay() == 0)
+		} else if (boat.getDelay() == 0) {
 			boat.doArmSwing();
+		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
-	public static boolean checkBoats(Boat boat) {
-		if (SkyPirates.boats != null && SkyPirates.boats.get(boat.getEntityId()) != null) {
+	public boolean checkBoats(Boat boat) {
+		plugin.getBoat(boat.getEntityId());
+		
+		if (plugin.getBoat(boat.getEntityId()) != null) {
 			return true;
 		}
 		
@@ -76,13 +77,8 @@ public class PlayerListen implements Listener {
 		if (!(checkBoats((Boat) p.getVehicle())))
 			return;
 		
-		BoatHandler boat = getBoatHandler((Boat) p.getVehicle());
+		BoatHandler boat = plugin.getBoat(((Boat) p.getVehicle()).getEntityId());
 		
 		boat.doRightClick(this.plugin);
-	}
-	
-
-	public static BoatHandler getBoatHandler(Boat boat) {
-		return SkyPirates.boats.get(boat.getEntityId());
 	}
 }

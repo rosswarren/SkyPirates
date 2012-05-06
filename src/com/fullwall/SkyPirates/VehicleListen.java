@@ -40,14 +40,14 @@ public class VehicleListen implements Listener {
 			
 			if (!(p.isInsideVehicle())) return;
 				
-			if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) return;
+			if (plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) == null) return;
 	
 			from = event.getFrom();
 			to = event.getTo();
 	
 			Boat tempBoat = (Boat) event.getVehicle();
 			Vector vel = tempBoat.getVelocity();
-			BoatHandler boat = PlayerListen.getBoatHandler(tempBoat);
+			BoatHandler boat = plugin.getBoat(tempBoat.getEntityId());
 	
 			boat.doYaw(from, to);
 			boat.updateCalendar();
@@ -67,12 +67,12 @@ public class VehicleListen implements Listener {
 			if  (event.getVehicle() instanceof Boat && player.hasPermission("skypirates.player.enable")) {
 				BoatHandler boat;
 
-				if (!(PlayerListen.checkBoats((Boat) event.getVehicle()))) {
+				if (plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) == null) {
 					boat = new BoatHandler((Boat) event.getVehicle(), Modes.NORMAL, event.getVehicle().getEntityId());
-					SkyPirates.boats.put(boat.getEntityId(), boat);
-				} else {
-					boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
 					
+					plugin.setBoat(boat.getEntityId(), boat);
+				} else {
+					boat = plugin.getBoat(event.getVehicle().getEntityId());
 				}
 				
 				this.plugin.sendMessage(player, SkyPirates.Messages.ENTER);
@@ -86,9 +86,9 @@ public class VehicleListen implements Listener {
 	public void onVehicleExit(VehicleExitEvent event) {
 		if (event.getExited() instanceof Player 
 				&& event.getVehicle() instanceof Boat 
-				&& PlayerListen.checkBoats((Boat) event.getVehicle())) {
+				&& plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) != null) {
 		
-			BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
+			BoatHandler boat = plugin.getBoat(event.getVehicle().getEntityId());
 			Player p = (Player) event.getExited();
 			this.plugin.sendMessage(p, SkyPirates.Messages.EXIT);
 			boat.setMode(Modes.NORMAL);
@@ -103,10 +103,10 @@ public class VehicleListen implements Listener {
 	public void onVehicleDamage(VehicleDamageEvent event) {
 		if (event.getVehicle() instanceof Boat 
 				&& event.getVehicle().getPassenger() instanceof Player
-				&& PlayerListen.checkBoats((Boat) event.getVehicle())) {
+				&& plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) != null) {
 	
 			Player p = (Player) event.getVehicle().getPassenger();
-			BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
+			BoatHandler boat = plugin.getBoat(event.getVehicle().getEntityId());
 	
 			boolean blockDamage = false;
 			
@@ -129,7 +129,7 @@ public class VehicleListen implements Listener {
 		if (event.getVehicle() instanceof Boat &&
 			event.getVehicle().getPassenger() instanceof Player) {
 			
-			BoatHandler boat = SkyPirates.boats.get(event.getVehicle().getEntityId());
+			BoatHandler boat = plugin.getBoat(event.getVehicle().getEntityId());
 			
 			// handle ice breaker stuff
 			if (boat.getMode() == BoatHandler.Modes.ICEBREAKER) {
