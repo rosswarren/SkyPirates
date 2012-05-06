@@ -14,13 +14,12 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
-
-import com.fullwall.SkyPirates.BoatHandler.Modes;
+import com.fullwall.SkyPirates.boats.*;
 
 /**
- * Listener
+ * Handles Vehicle Events
  * 
- * @author fullwall
+ * @author Ross Warren
  */
 public class VehicleListen implements Listener {
 	private final SkyPirates plugin;
@@ -40,22 +39,19 @@ public class VehicleListen implements Listener {
 			
 			if (!(p.isInsideVehicle())) return;
 				
-			if (plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) == null) return;
+			if (plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) == null) return;
 	
 			from = event.getFrom();
 			to = event.getTo();
 	
 			Boat tempBoat = (Boat) event.getVehicle();
 			Vector vel = tempBoat.getVelocity();
-			BoatHandler boat = plugin.getBoat(tempBoat.getEntityId());
+			BoatHandler boatHandler = plugin.getBoatHandler(tempBoat.getEntityId());
 	
-			boat.doYaw(from, to);
-			boat.updateCalendar();
-			// boat.doRealisticFriction();
-	
-			if (boat.isMoving() && boat.getMovingLastTick() == true) {
-				boat.movementHandler(vel);
-			}
+			boatHandler.doYaw(from, to);
+			boatHandler.updateCalendar();
+
+			boatHandler.movementHandler(vel);
 		}
 	}
 
@@ -65,19 +61,17 @@ public class VehicleListen implements Listener {
 			Player player = (Player) event.getEntered();
 			
 			if  (event.getVehicle() instanceof Boat && player.hasPermission("skypirates.player.enable")) {
-				BoatHandler boat;
+				BoatHandler boatHandler;
 
-				if (plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) == null) {
-					boat = new BoatHandler((Boat) event.getVehicle(), Modes.NORMAL, event.getVehicle().getEntityId());
+				if (plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) == null) {
+					boatHandler = new Normal((Boat) event.getVehicle());
 					
-					plugin.setBoat(boat.getEntityId(), boat);
+					plugin.setBoat(boatHandler.getEntityId(), boatHandler);
 				} else {
-					boat = plugin.getBoat(event.getVehicle().getEntityId());
+					boatHandler = plugin.getBoatHandler(event.getVehicle().getEntityId());
 				}
 				
 				this.plugin.sendMessage(player, SkyPirates.Messages.ENTER);
-				
-				boat.setMode(Modes.NORMAL);
 			}
 		}
 	}
@@ -86,12 +80,12 @@ public class VehicleListen implements Listener {
 	public void onVehicleExit(VehicleExitEvent event) {
 		if (event.getExited() instanceof Player 
 				&& event.getVehicle() instanceof Boat 
-				&& plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) != null) {
+				&& plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) != null) {
 		
-			BoatHandler boat = plugin.getBoat(event.getVehicle().getEntityId());
+			BoatHandler boat = plugin.getBoatHandler(event.getVehicle().getEntityId());
+			plugin.removeBoatHandler(event.getVehicle().getEntityId());
 			Player p = (Player) event.getExited();
 			this.plugin.sendMessage(p, SkyPirates.Messages.EXIT);
-			boat.setMode(Modes.NORMAL);
 			
 			if (this.plugin.getDestroyBoatsOnExit()) {
 				boat.destroy();
@@ -103,20 +97,13 @@ public class VehicleListen implements Listener {
 	public void onVehicleDamage(VehicleDamageEvent event) {
 		if (event.getVehicle() instanceof Boat 
 				&& event.getVehicle().getPassenger() instanceof Player
-				&& plugin.getBoat(((Boat) event.getVehicle()).getEntityId()) != null) {
+				&& plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) != null) {
 	
 			Player p = (Player) event.getVehicle().getPassenger();
-			BoatHandler boat = plugin.getBoat(event.getVehicle().getEntityId());
-	
-			boolean blockDamage = false;
+			BoatHandler boat = plugin.getBoatHandler(event.getVehicle().getEntityId());
 			
-			if (p.hasPermission("skypirates.admin.invincible")) {
-				blockDamage = true;
-			} else if ((boat.getItemInHandID() == 49) && p.hasPermission("skypirates.items.obsidian")) {
-				blockDamage = true;
-			}
-			
-			if (blockDamage) {
+			if (p.hasPermission("skypirates.admin.invincible")
+					|| (boat.getMaterialInHand() == Material.OBSIDIAN && p.hasPermission("skypirates.items.obsidian"))) {
 				event.setDamage(0);
 				event.setCancelled(true);
 			}
@@ -129,45 +116,13 @@ public class VehicleListen implements Listener {
 		if (event.getVehicle() instanceof Boat &&
 			event.getVehicle().getPassenger() instanceof Player) {
 			
-			BoatHandler boat = plugin.getBoat(event.getVehicle().getEntityId());
+			BoatHandler boat = plugin.getBoatHandler(event.getVehicle().getEntityId());
 			
 			// handle ice breaker stuff
-			if (boat.getMode() == BoatHandler.Modes.ICEBREAKER) {
+			if (boat.getClass() == Icebreaker.class) {
 		        Block block = event.getBlock();
-		        
-		        breakIce(block, 2);
+		        ((Icebreaker) boat).breakIce(block, 2);
 			}
 		}
-	}
-	
-	/**
-	 * Converts ice to water for the radius around the given block
-	 * This method runs immediately
-	 * 
-	 * @param centreBlock	The point at which to break ice around
-	 * @param radius		The radius at which to break ice around
-	 */
-	private void breakIce(Block centreBlock, int radius) {
-        
-        // iterate the x axis
-        for (int x = -radius; x <= radius; x++) {
-        	
-        	// iterate the z axis
-            for (int z = -radius; z <= radius; z++) {
-            	
-            	// if it is too far away, don't convert
-                if (x * x + z * z > radius * radius) {
-                    continue;
-                }
-                
-                // get the block
-                Block block = centreBlock.getRelative(x, 0, z);
-                
-                // convert to water if it is ice
-                if (block.getType().equals(Material.ICE)) {
-                    block.setType(Material.WATER);
-                }
-            }
-        }
 	}
 }

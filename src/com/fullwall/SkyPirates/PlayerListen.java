@@ -11,6 +11,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
+/**
+ * Handles Player Events
+ * 
+ * @author Ross Warren
+ */
 public class PlayerListen implements Listener {
 	public SkyPirates plugin;
 
@@ -36,49 +41,45 @@ public class PlayerListen implements Listener {
 		
 		Player p = event.getPlayer();
 		
-		if (!(p.isInsideVehicle()))
-			return;
+		if (p.isInsideVehicle()
+				&& p.getVehicle() instanceof Boat
+				&& checkBoats((Boat) p.getVehicle())) {
 		
-		if (!(p.getVehicle() instanceof Boat))
-			return;
-		
-		if (!(checkBoats((Boat) p.getVehicle())))
-			return;
-		
-		BoatHandler boat = plugin.getBoat(((Boat) p.getVehicle()).getEntityId());
-		
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			boat.doRightClick(this.plugin);
-		} else if (boat.getDelay() == 0) {
-			boat.doArmSwing();
+			BoatHandler boatHandler = plugin.getBoatHandler(((Boat) p.getVehicle()).getEntityId());
+
+			if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				doSneakOrRightClick(boatHandler);
+			} else if (boatHandler.getDelay() == 0) {
+				boatHandler.doArmSwing();
+			}
 		}
 	}
 
-	public boolean checkBoats(Boat boat) {
-		plugin.getBoat(boat.getEntityId());
-		
-		if (plugin.getBoat(boat.getEntityId()) != null) {
-			return true;
-		}
-		
-		return false;
+	/**
+	 * Check if the boat has a handler
+	 * 
+	 * @param boat	the boat to check for
+	 * @return		true if found, else false
+	 */
+	public Boolean checkBoats(Boat boat) {
+		return (plugin.getBoatHandler(boat.getEntityId()) != null);
 	}
+	
+	private void doSneakOrRightClick(BoatHandler boatHandler) {
+		boatHandler.doRightClick(this.plugin);
+	}
+	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
 		Player p = event.getPlayer();
 		
-		if (!(p.isInsideVehicle()))
-			return;
-		
-		if (!(p.getVehicle() instanceof Boat))
-			return;
-		
-		if (!(checkBoats((Boat) p.getVehicle())))
-			return;
-		
-		BoatHandler boat = plugin.getBoat(((Boat) p.getVehicle()).getEntityId());
-		
-		boat.doRightClick(this.plugin);
+		if (p.isInsideVehicle()
+				&& p.getVehicle() instanceof Boat
+				&& checkBoats((Boat) p.getVehicle())) {
+			
+			BoatHandler boatHandler = plugin.getBoatHandler(((Boat) p.getVehicle()).getEntityId());
+			doSneakOrRightClick(boatHandler);
+		}
 	}
 }

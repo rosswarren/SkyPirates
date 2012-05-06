@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 
-import com.fullwall.SkyPirates.BoatHandler.Modes;
+import com.fullwall.SkyPirates.boats.*;
 
 /**
  * SkyPirates for Bukkit
@@ -259,64 +259,70 @@ public class SkyPirates extends JavaPlugin {
 			return true;
 		}
 		
-		BoatHandler boat = this.getBoat(((Boat) player.getVehicle()).getEntityId());
+		int id = player.getVehicle().getEntityId();
 		
 		if (option.equals("p") || option.equals("plane")) {
 			if (player.hasPermission("skypirates.modes.plane")) {
 				sendMessage(player, Messages.PLANE);
-				boat.setMode(Modes.PLANE);
+				
+				Plane handler = new Plane((Boat) player.getVehicle());
+				this.setBoat(id, handler);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.equals("s") || option.contains("sub")) {
 			if (player.hasPermission("skypirates.modes.submarine")) {
-				sendMessage(player, Messages.SUBMARINE);
-				boat.setMode(Modes.SUBMARINE);
+				Submarine handler = new Submarine((Boat) player.getVehicle());
+				this.setBoat(id, handler);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("hover") || option.equals("h")) {
 			if (player.hasPermission("skypirates.modes.hoverboat")) {
-				sendMessage(player, Messages.HOVER);
-				boat.setMode(Modes.HOVER);
+				Hovercraft handler = new Hovercraft((Boat) player.getVehicle());
+				this.setBoat(id, handler);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("glider") || option.equals("g")) {
 			if (player.hasPermission("skypirates.modes.glider")) {
-				sendMessage(player, Messages.GLIDER);
-				boat.setMode(Modes.GLIDER);
+				Glider handler = new Glider((Boat) player.getVehicle());
+				this.setBoat(id, handler);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("drill") || option.equals("d")) {
 			if (player.hasPermission("skypirates.modes.drill")) {
-				sendMessage(player, Messages.DRILL);
-				boat.setMode(Modes.DRILL);
+				Drill handler = new Drill((Boat) player.getVehicle());
+				this.setBoat(id, handler);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else if (option.contains("ice") || option.equals("i")) {
 			if (player.hasPermission("skypirates.modes.icebreaker")) {
-				sendMessage(player, Messages.ICEBREAKER);
-				boat.setMode(Modes.ICEBREAKER);
+				Icebreaker handler = new Icebreaker((Boat) player.getVehicle());
+				this.setBoat(id, handler);
 			} else {
 				sendMessage(player, Messages.NO_PERMISSION);
 			}
 		} else {
 			sendMessage(player, Messages.NORMAL);
-			boat.setMode(Modes.NORMAL);
-			boat.resetValues();
+			Normal handler = new Normal((Boat) player.getVehicle());
+			this.setBoat(id, handler);
 		}
 		
 		return false;
 	}
 	
-	public BoatHandler getBoat(int id) {
+	public BoatHandler getBoatHandler(int id) {
 		return boats.get(id);
 	}
 	
 	public void setBoat(int id, BoatHandler handler) {
 		boats.put(id, handler);
+	}
+	
+	public void removeBoatHandler(int id) {
+		boats.remove(id);
 	}
 }
