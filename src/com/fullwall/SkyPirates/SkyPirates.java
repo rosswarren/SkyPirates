@@ -134,8 +134,7 @@ public class SkyPirates extends JavaPlugin {
 		PluginManager pluginManager = getServer().getPluginManager();
 		
 		// register listeners so that they can handle events
-		pluginManager.registerEvents((Listener) new VehicleListen(this), this);
-		pluginManager.registerEvents((Listener) new PlayerListen(this), this);
+		pluginManager.registerEvents((Listener) new EventListener(this), this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		
