@@ -319,7 +319,7 @@ public class SkyPirates extends JavaPlugin {
 	}
 
 	private void populateHelmets() {
-		helmets.add("298");
+		helmets.add("298"); 
 		helmets.add("306");
 		helmets.add("310");
 		helmets.add("314");
