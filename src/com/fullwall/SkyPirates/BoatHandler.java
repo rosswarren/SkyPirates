@@ -27,14 +27,16 @@ public abstract class BoatHandler {
 	public double toYaw = 0D;
 	protected int hoverHeight = 0;
 	private double maxSpeed = 0.8D;
-	protected boolean goingDown = false;
-	protected boolean goingUp = false;
+	protected Boolean goingDown = false;
+	protected Boolean goingUp = false;
 	protected ArrayList<Material> helmets = new ArrayList<Material>();
 
 	protected final double DOWNWARD_DRIFT = -0.037999998673796664D;
 	protected final double COMPENSATION = 0.0379999999999999999999999999999999999999999999D;
 	protected final double MAX_BUOYANCY = 0.1D;
 	protected int MAX_HOVER_HEIGHT = 1;
+	
+	protected Boolean cancelRightClick = false;
 
 	public BoatHandler(Boat newBoat) {
 		boat = newBoat;
@@ -189,6 +191,8 @@ public abstract class BoatHandler {
 	public void doRightClick(SkyPirates plugin) {
 		Player p = getPlayer();
 		
+		cancelRightClick = true;
+		
 		if (getMaterialInHand() == Material.DIAMOND && p.hasPermission("skypirates.items.diamond")) {
 			if (!p.isSneaking()) {
 				speedUpBoat(10, boat.getVelocity());
@@ -199,6 +203,8 @@ public abstract class BoatHandler {
 		} else if (getMaterialInHand() == Material.SNOW_BLOCK && p.hasPermission("skypirates.items.snowblock")) {
 			stopBoat();
 			plugin.sendMessage(p, SkyPirates.Messages.STOP);
+		} else {
+			cancelRightClick = false;
 		}
 	}
 

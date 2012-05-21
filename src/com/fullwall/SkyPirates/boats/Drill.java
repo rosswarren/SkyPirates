@@ -22,7 +22,10 @@ public final class Drill extends BoatHandler {
 	@Override
 	public void doRightClick(SkyPirates plugin) {
 		super.doRightClick(plugin);
-		drill();
+		
+		if (!cancelRightClick) {
+			drill();
+		}
 	}
 	
 	public void drill() {		

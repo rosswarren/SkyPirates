@@ -40,10 +40,14 @@ public final class Plane extends BoatHandler {
 			Item item = getPlayer().getWorld().dropItemNaturally(p.getLocation(), new ItemStack(Material.TNT, 1));
 			Timer t = new Timer();
 			t.schedule(new DropTNT(item), 1000);
+			
+			cancelRightClick = true;
 		}
-
-		goingDown = true;
-		setMotionY(-0.65D);
+		
+		if (!cancelRightClick) {
+			goingDown = true;
+			setMotionY(-0.65D);
+		}
 	}
 	
 	@Override

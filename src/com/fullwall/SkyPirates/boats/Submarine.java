@@ -22,8 +22,10 @@ public final class Submarine extends BoatHandler {
 	public void doRightClick(SkyPirates plugin) {
 		super.doRightClick(plugin);
 
-		goingDown = true;
-		setMotionY(-0.2D);
+		if (!cancelRightClick) {
+			goingDown = true;
+			setMotionY(-0.2D);
+		}
 	}
 	
 	@Override
@@ -31,10 +33,7 @@ public final class Submarine extends BoatHandler {
 		// apply 'gravity' - aims to just be gentle downward motion
 		Player p = getPlayer();
 
-		if (goingUp != true)
-			vel.setY(vel.getY() - 0.03);
-		else
-			vel.setY(vel.getY() - 0.03);
+		vel.setY(vel.getY() - 0.03);
 
 		// cap y velocity to combat buoyancy
 		if (vel.getY() > MAX_BUOYANCY) {
@@ -63,18 +62,14 @@ public final class Submarine extends BoatHandler {
 				goingUp = false;
 				vel.setY(0D);
 			}
-			
-			setMotion(vel.getX(), vel.getY(), vel.getZ());
 		} else if (goingDown == true) {
 			if (vel.getY() <= -0.6D) {
 				vel.setY(-0.6D);
 				
 				if (vel.getY() >= 0D) goingDown = false;
 			}
-			
-			setMotion(vel.getX(), vel.getY(), vel.getZ());
-		} else {
-			setMotion(vel.getX(), vel.getY(), vel.getZ());
 		}
+		
+		setMotion(vel.getX(), vel.getY(), vel.getZ());
 	}
 }
