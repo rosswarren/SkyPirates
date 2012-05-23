@@ -271,6 +271,8 @@ public class SkyPirates extends JavaPlugin {
 			}
 		} else if (option.equals("s") || option.contains("sub")) {
 			if (player.hasPermission("skypirates.modes.submarine")) {
+				sendMessage(player, Messages.SUBMARINE);
+				
 				Submarine handler = new Submarine((Boat) player.getVehicle());
 				this.setBoat(id, handler);
 			} else {
@@ -278,6 +280,8 @@ public class SkyPirates extends JavaPlugin {
 			}
 		} else if (option.contains("hover") || option.equals("h")) {
 			if (player.hasPermission("skypirates.modes.hoverboat")) {
+				sendMessage(player, Messages.HOVER);
+				
 				Hovercraft handler = new Hovercraft((Boat) player.getVehicle());
 				this.setBoat(id, handler);
 			} else {
@@ -285,6 +289,8 @@ public class SkyPirates extends JavaPlugin {
 			}
 		} else if (option.contains("glider") || option.equals("g")) {
 			if (player.hasPermission("skypirates.modes.glider")) {
+				sendMessage(player, Messages.GLIDER);
+				
 				Glider handler = new Glider((Boat) player.getVehicle());
 				this.setBoat(id, handler);
 			} else {
@@ -292,6 +298,8 @@ public class SkyPirates extends JavaPlugin {
 			}
 		} else if (option.contains("drill") || option.equals("d")) {
 			if (player.hasPermission("skypirates.modes.drill")) {
+				sendMessage(player, Messages.DRILL);
+				
 				Drill handler = new Drill((Boat) player.getVehicle());
 				this.setBoat(id, handler);
 			} else {
@@ -299,6 +307,8 @@ public class SkyPirates extends JavaPlugin {
 			}
 		} else if (option.contains("ice") || option.equals("i")) {
 			if (player.hasPermission("skypirates.modes.icebreaker")) {
+				sendMessage(player, Messages.ICEBREAKER);
+				
 				Icebreaker handler = new Icebreaker((Boat) player.getVehicle());
 				this.setBoat(id, handler);
 			} else {
@@ -306,6 +316,7 @@ public class SkyPirates extends JavaPlugin {
 			}
 		} else {
 			sendMessage(player, Messages.NORMAL);
+			
 			Normal handler = new Normal((Boat) player.getVehicle());
 			this.setBoat(id, handler);
 		}
