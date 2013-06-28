@@ -11,13 +11,12 @@ import com.fullwall.SkyPirates.*;
 public final class Icebreaker extends BoatHandler {
 	public Icebreaker(Boat newBoat) {
 		super(newBoat);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
-	public void movementHandler(Vector vel) {
-		Entity ce = (Entity) this.boat.getPassenger();
-		Vector playerVelocity = ce.getVelocity().clone();
+	public void movementHandler(Vector velocity) {
+		Entity passenger = boat.getPassenger();
+		Vector playerVelocity = passenger.getVelocity().clone();
 		
 		double playerVelocityX = playerVelocity.getX();
 		double playerVelocityZ = playerVelocity.getZ();
@@ -27,8 +26,8 @@ public final class Icebreaker extends BoatHandler {
 			speedUpBoat(10, boat.getVelocity());
 		}
 
-		double currentX = vel.getX();
-		double currentZ = vel.getZ();
+		double currentX = velocity.getX();
+		double currentZ = velocity.getZ();
 		
 		boolean boostSteering = false;
 
@@ -43,7 +42,7 @@ public final class Icebreaker extends BoatHandler {
 		if (boostSteering) {
 			currentX = currentX / 1.2D + playerVelocityX;
 			currentZ = currentZ / 1.2D + playerVelocityZ;
-			this.setMotion(currentX, vel.getY(), currentZ);
+			this.setMotion(currentX, velocity.getY(), currentZ);
 		}
 		
 		if (cal.getTimeInMillis() >= delay + 3000) {

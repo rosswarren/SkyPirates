@@ -2,8 +2,6 @@ package com.fullwall.SkyPirates;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import net.minecraft.server.EntityBoat;
-import org.bukkit.craftbukkit.entity.CraftBoat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,19 +14,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public abstract class BoatHandler {
-	public final Boat boat;
+	protected Boat boat;
 	
 	protected Calendar cal;
 	
 	protected long delay = 0;
-	
+
 	private final double maxMomentum = 10D;
 	public double fromYaw = 0D;
 	public double toYaw = 0D;
 	protected int hoverHeight = 0;
 	private double maxSpeed = 0.8D;
-	protected Boolean goingDown = false;
-	protected Boolean goingUp = false;
+	protected boolean goingDown;
+	protected boolean goingUp;
 	protected ArrayList<Material> helmets = new ArrayList<Material>();
 
 	protected final double DOWNWARD_DRIFT = -0.037999998673796664D;
@@ -36,7 +34,7 @@ public abstract class BoatHandler {
 	protected final double MAX_BUOYANCY = 0.1D;
 	protected int MAX_HOVER_HEIGHT = 1;
 	
-	protected Boolean cancelRightClick = false;
+	private Boolean cancelRightClick = false;
 
 	public BoatHandler(Boat newBoat) {
 		boat = newBoat;
@@ -46,23 +44,23 @@ public abstract class BoatHandler {
 
 		populateHelmets();
 	}
-	
-	/**
-	 * remove the boat
-	 */
+
+    protected boolean canRightClick() {
+        return !cancelRightClick;
+    }
+
+    protected void blockRightClick() {
+        cancelRightClick = true;
+    }
+
 	public void destroy() {
 		boat.remove();
+
 		getPlayer().getInventory().addItem(new ItemStack(Material.BOAT, 1));
 	}
 
 	protected double getYaw() {
 		return boat.getLocation().getYaw();
-	}
-
-	public void setYaw(double fromYaw, double toYaw) {
-		this.fromYaw = fromYaw;
-		this.toYaw = toYaw;
-		return;
 	}
 
 	protected void setMotion(double motionX, double motionY, double motionZ) {
@@ -73,19 +71,9 @@ public abstract class BoatHandler {
 		boat.setVelocity(newVelocity);
 	}
 
-	public void setMotionX(double motionX) {
-		motionX = RangeHandler.range(motionX, maxMomentum, -maxMomentum);
-		setMotion(motionX, boat.getVelocity().getY(), boat.getVelocity().getZ());
-	}
-
 	public void setMotionY(double motionY) {
 		motionY = RangeHandler.range(motionY, maxMomentum, -maxMomentum);
 		setMotion(boat.getVelocity().getX(), motionY, boat.getVelocity().getZ());
-	}
-
-	public void setMotionZ(double motionZ) {
-		motionZ = RangeHandler.range(motionZ, maxMomentum, -maxMomentum);
-		setMotion(boat.getVelocity().getX(), boat.getVelocity().getY(), motionZ);
 	}
 
 	public int getX() {
@@ -113,8 +101,7 @@ public abstract class BoatHandler {
 	}
 
 	protected Player getPlayer() {
-		final Player p = (Player) boat.getPassenger();
-		return p;
+		return (Player) boat.getPassenger();
 	}
 
 	public int getEntityId() {
@@ -122,10 +109,8 @@ public abstract class BoatHandler {
 	}
 
 	protected boolean isGrounded() {
-		EntityBoat be = (EntityBoat) ((CraftBoat) this.boat).getHandle();
-		return be.onGround;
+        return boat.isOnGround();
 	}
-
 
 	public void stopBoat() {
 		setMotion(0D, 0D, 0D);
@@ -135,18 +120,6 @@ public abstract class BoatHandler {
 		Calendar current = Calendar.getInstance();
 		if (cal.get(Calendar.SECOND) != current.get(Calendar.SECOND)) {
 			cal = current;
-		}
-	}
-
-	public void resetValues() {
-		goingDown = false;
-		goingUp = false;
-		delay = 0;
-	}
-
-	public void doRealisticFriction() {
-		if (getPlayer() == null) {
-			setMotion(boat.getVelocity().getX() * 0.53774, boat.getVelocity().getY(), boat.getVelocity().getZ() * 0.53774);
 		}
 	}
 
@@ -170,8 +143,8 @@ public abstract class BoatHandler {
 				newZ *= -1;
 			}
 		}
+
 		this.setMotion(newX, vel.getY(), newZ);
-		return;
 	}
 
 	public abstract void movementHandler(Vector vel);
@@ -191,7 +164,7 @@ public abstract class BoatHandler {
 	public void doRightClick(SkyPirates plugin) {
 		Player p = getPlayer();
 		
-		cancelRightClick = true;
+		blockRightClick();
 		
 		if (getMaterialInHand() == Material.DIAMOND && p.hasPermission("skypirates.items.diamond")) {
 			if (!p.isSneaking()) {
@@ -204,11 +177,11 @@ public abstract class BoatHandler {
 			stopBoat();
 			plugin.sendMessage(p, SkyPirates.Messages.STOP);
 		} else {
-			cancelRightClick = false;
+            allowRightClick();
 		}
 	}
 
-	public void doYaw(Location from, Location to) {
+    public void doYaw(Location from, Location to) {
 		fromYaw = (double) from.getYaw();
 		toYaw = (double) to.getYaw();
 		// attempt to increase rotation on land
@@ -223,14 +196,17 @@ public abstract class BoatHandler {
 		else if (toYaw >= fromYaw - 3 && toYaw <= fromYaw + 3) {
 			to.setYaw((float) (fromYaw * 3.3));
 		}
-		return;
 	}
 	
 	public long getDelay() {
 		return delay;
 	}
-	
-	private void populateHelmets() {
+
+    private void allowRightClick() {
+        cancelRightClick = true;
+    }
+
+    private void populateHelmets() {
 		helmets.add(Material.LEATHER_HELMET);
 		helmets.add(Material.IRON_HELMET);
 		helmets.add(Material.DIAMOND_HELMET);

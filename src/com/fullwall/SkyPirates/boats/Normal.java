@@ -9,12 +9,11 @@ import com.fullwall.SkyPirates.*;
 public final class Normal extends BoatHandler {
 	public Normal(Boat newBoat) {
 		super(newBoat);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public void movementHandler(Vector vel) {
-		Entity ce = (Entity) this.boat.getPassenger();
+		Entity ce = this.boat.getPassenger();
 		Vector playerVelocity = ce.getVelocity().clone();
 		
 		double playerVelocityX = playerVelocity.getX();

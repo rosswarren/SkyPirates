@@ -22,16 +22,9 @@ import org.bukkit.util.Vector;
 import com.fullwall.SkyPirates.boats.Icebreaker;
 import com.fullwall.SkyPirates.boats.Normal;
 
-/**
- * Handles Player Events
- * 
- * @author Ross Warren
- */
 public class EventListener implements Listener {
 	private final SkyPirates plugin;
 
-	public double fromYaw;
-	public double toYaw;
 	public Location from;
 	public Location to;
 
@@ -59,9 +52,9 @@ public class EventListener implements Listener {
 		
 		if (p.isInsideVehicle()
 				&& p.getVehicle() instanceof Boat
-				&& checkBoats((Boat) p.getVehicle())) {
+				&& boatHasHandler((Boat) p.getVehicle())) {
 		
-			BoatHandler boatHandler = plugin.getBoatHandler(((Boat) p.getVehicle()).getEntityId());
+			BoatHandler boatHandler = plugin.getBoatHandler(p.getVehicle().getEntityId());
 
 			if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				doSneakOrRightClick(boatHandler);
@@ -71,13 +64,7 @@ public class EventListener implements Listener {
 		}
 	}
 
-	/**
-	 * Check if the boat has a handler
-	 * 
-	 * @param boat	the boat to check for
-	 * @return		true if found, else false
-	 */
-	public Boolean checkBoats(Boat boat) {
+	public Boolean boatHasHandler(Boat boat) {
 		return (plugin.getBoatHandler(boat.getEntityId()) != null);
 	}
 	
@@ -92,9 +79,9 @@ public class EventListener implements Listener {
 		
 		if (p.isInsideVehicle()
 				&& p.getVehicle() instanceof Boat
-				&& checkBoats((Boat) p.getVehicle())) {
+				&& boatHasHandler((Boat) p.getVehicle())) {
 			
-			BoatHandler boatHandler = plugin.getBoatHandler(((Boat) p.getVehicle()).getEntityId());
+			BoatHandler boatHandler = plugin.getBoatHandler((p.getVehicle()).getEntityId());
 			doSneakOrRightClick(boatHandler);
 		}
 	}
@@ -106,7 +93,7 @@ public class EventListener implements Listener {
 			
 			if (!(p.isInsideVehicle())) return;
 				
-			if (plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) == null) return;
+			if (plugin.getBoatHandler(event.getVehicle().getEntityId()) == null) return;
 	
 			from = event.getFrom();
 			to = event.getTo();
@@ -130,12 +117,10 @@ public class EventListener implements Listener {
 			if  (event.getVehicle() instanceof Boat && player.hasPermission("skypirates.player.enable")) {
 				BoatHandler boatHandler;
 
-				if (plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) == null) {
+				if (plugin.getBoatHandler(event.getVehicle().getEntityId()) == null) {
 					boatHandler = new Normal((Boat) event.getVehicle());
 					
 					plugin.setBoat(boatHandler.getEntityId(), boatHandler);
-				} else {
-					boatHandler = plugin.getBoatHandler(event.getVehicle().getEntityId());
 				}
 				
 				this.plugin.sendMessage(player, SkyPirates.Messages.ENTER);
@@ -147,7 +132,7 @@ public class EventListener implements Listener {
 	public void onVehicleExit(VehicleExitEvent event) {
 		if (event.getExited() instanceof Player 
 				&& event.getVehicle() instanceof Boat 
-				&& plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) != null) {
+				&& plugin.getBoatHandler(event.getVehicle().getEntityId()) != null) {
 		
 			BoatHandler boat = plugin.getBoatHandler(event.getVehicle().getEntityId());
 			plugin.removeBoatHandler(event.getVehicle().getEntityId());
@@ -164,7 +149,7 @@ public class EventListener implements Listener {
 	public void onVehicleDamage(VehicleDamageEvent event) {
 		if (event.getVehicle() instanceof Boat 
 				&& event.getVehicle().getPassenger() instanceof Player
-				&& plugin.getBoatHandler(((Boat) event.getVehicle()).getEntityId()) != null) {
+				&& plugin.getBoatHandler((event.getVehicle()).getEntityId()) != null) {
 	
 			Player p = (Player) event.getVehicle().getPassenger();
 			BoatHandler boat = plugin.getBoatHandler(event.getVehicle().getEntityId());
@@ -180,8 +165,7 @@ public class EventListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleBlockCollision(VehicleBlockCollisionEvent event) {
 		// check that the vehicle is a boat and that the passenger is a player
-		if (event.getVehicle() instanceof Boat &&
-			event.getVehicle().getPassenger() instanceof Player) {
+		if (event.getVehicle() instanceof Boat && event.getVehicle().getPassenger() instanceof Player) {
 			
 			BoatHandler boat = plugin.getBoatHandler(event.getVehicle().getEntityId());
 			

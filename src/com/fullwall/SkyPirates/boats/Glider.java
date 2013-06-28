@@ -9,7 +9,6 @@ import com.fullwall.SkyPirates.*;
 public final class Glider extends BoatHandler {
 	public Glider(Boat newBoat) {
 		super(newBoat);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

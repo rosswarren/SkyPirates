@@ -14,7 +14,6 @@ import com.fullwall.SkyPirates.*;
 public final class Plane extends BoatHandler {
 	public Plane(Boat newBoat) {
 		super(newBoat);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -40,11 +39,11 @@ public final class Plane extends BoatHandler {
 			Item item = getPlayer().getWorld().dropItemNaturally(p.getLocation(), new ItemStack(Material.TNT, 1));
 			Timer t = new Timer();
 			t.schedule(new DropTNT(item), 1000);
-			
-			cancelRightClick = true;
+
+            blockRightClick();
 		}
 		
-		if (!cancelRightClick) {
+		if (canRightClick()) {
 			goingDown = true;
 			setMotionY(-0.65D);
 		}

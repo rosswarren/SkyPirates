@@ -9,7 +9,6 @@ import com.fullwall.SkyPirates.*;
 public final class Submarine extends BoatHandler {
 	public Submarine(Boat newBoat) {
 		super(newBoat);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -40,7 +39,7 @@ public final class Submarine extends BoatHandler {
 			vel.setY(MAX_BUOYANCY);
 		}
 		
-		if (goingUp == false && vel.getY() > 0) {
+		if (!goingUp && vel.getY() > 0) {
 			vel.setY(-0.15D);
 		}
 
@@ -55,14 +54,14 @@ public final class Submarine extends BoatHandler {
 			}
 		}
 
-		if (goingUp == true) {
+		if (goingUp) {
 			vel.setY(vel.getY() - 0.009);
 			
 			if (vel.getY() <= 0.025D) {
 				goingUp = false;
 				vel.setY(0D);
 			}
-		} else if (goingDown == true) {
+		} else if (goingDown) {
 			if (vel.getY() <= -0.6D) {
 				vel.setY(-0.6D);
 				

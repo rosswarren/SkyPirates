@@ -11,7 +11,6 @@ import com.fullwall.SkyPirates.*;
 public final class Hovercraft extends BoatHandler {
 	public Hovercraft(Boat newBoat) {
 		super(newBoat);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -48,12 +47,14 @@ public final class Hovercraft extends BoatHandler {
 				goDown = true;
 			}
 		}
-		// if (stop == false)
-		hoverHeight = block.getY() + (MAX_HOVER_HEIGHT * 2);
+
+        if (block != null) {
+            hoverHeight = block.getY() + (MAX_HOVER_HEIGHT * 2);
+        }
 
 		if (boat.getLocation().getY() < hoverHeight + 0.6) {
 			setMotionY(0.35D);
-		} else if (goDown == true && boat.getLocation().getY() > hoverHeight + 0.6) {
+		} else if (goDown && boat.getLocation().getY() > hoverHeight + 0.6) {
 			setMotionY(-.25D);
 		} else {
 			setMotionY(0D);

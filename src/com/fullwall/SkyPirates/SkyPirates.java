@@ -1,7 +1,7 @@
 package com.fullwall.SkyPirates;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,9 +17,6 @@ import org.bukkit.entity.Player;
 
 import com.fullwall.SkyPirates.boats.*;
 
-/**
- * SkyPirates for Bukkit
- */
 public class SkyPirates extends JavaPlugin {
 	private HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
 	private Boolean destroyBoatsOnExit;
@@ -43,19 +39,7 @@ public class SkyPirates extends JavaPlugin {
 		ENTER,
 		EXIT
 	}
-	
-	public enum Commands {
-		CLEAR,
-		HELP,
-		NORMAL,
-		PLANE,
-		HOVER,
-		GLIDER,
-		DRILL,
-		ICEBREAKER
-	}
 
-	public static SkyPirates plugin;
 	public static Logger log = Logger.getLogger("Minecraft");
 
 	@Override
@@ -128,13 +112,12 @@ public class SkyPirates extends JavaPlugin {
 		p.sendMessage(text);
 	}
 
-	// runs when the plugin is loaded
 	@Override
 	public void onEnable() {
 		PluginManager pluginManager = getServer().getPluginManager();
 		
 		// register listeners so that they can handle events
-		pluginManager.registerEvents((Listener) new EventListener(this), this);
+		pluginManager.registerEvents(new EventListener(this), this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		
@@ -160,28 +143,19 @@ public class SkyPirates extends JavaPlugin {
 	 */
 	private void loadConfiguration() {
 		this.strings = new HashMap<String, String>();
-		
-		// get the strings section
+
 		MemorySection stringSection = (MemorySection) this.getConfig().get("strings");
-		
-		// get all the keys, (the string names)
 		Set<String> keys = stringSection.getKeys(false);
-		
-		// load all the strings to the hashmap from the configuration yaml file
-		for(String key: keys) {
+
+		for (String key: keys) {
 			this.strings.put(key, stringSection.getString(key));
 		}
-		
-		
+
 		MemorySection optionsSection = (MemorySection) this.getConfig().get("options");
 		
 		String answer = optionsSection.getString("destroy-boat-on-exit");
-		
-		if (answer.contains("t")) {
-			this.destroyBoatsOnExit = true;
-		} else {
-			this.destroyBoatsOnExit = false;
-		}
+
+        this.destroyBoatsOnExit = answer.contains("t");
 	}
 
 	@Override
@@ -222,8 +196,8 @@ public class SkyPirates extends JavaPlugin {
 					sendMessage(player, Messages.NO_BOATS);
 					return true;
 				}
-				
-				for (Entry<Integer, BoatHandler> entry : boats.entrySet()) {
+
+				for (Map.Entry<Integer, BoatHandler> entry : boats.entrySet()) {
 					BoatHandler boatHandler = entry.getValue();
 					
 					if (boatHandler.boat.isEmpty()) {
