@@ -12,5 +12,5 @@ strings:
   drill: The boat feels like it has immense force behind it, enough to drill through solid earth.
   icebreaker: The boats hull hardens, enabling it to smash through ice.
   normal: The boat is just that, an ordinary vehicle.
+  command-not-available: The command is not available, maybe you need to be in a boat, or you do not have permission.
 options:
-  destroy-boat-on-exit: false

@@ -19,8 +19,8 @@ public final class Drill extends BoatHandler {
 	}
 	
 	@Override
-	public void doRightClick(SkyPirates plugin) {
-		super.doRightClick(plugin);
+	public void doRightClick() {
+		super.doRightClick();
 		
 		if (canRightClick()) {
 			drill();

@@ -14,5 +14,6 @@ public enum Messages {
     HELP,
     STOP,
     ENTER,
-    EXIT
+    EXIT,
+    COMMAND_NOT_AVAILABLE
 }

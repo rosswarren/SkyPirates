@@ -18,8 +18,8 @@ public final class Submarine extends BoatHandler {
 	}
 	
 	@Override
-	public void doRightClick(SkyPirates plugin) {
-		super.doRightClick(plugin);
+	public void doRightClick() {
+		super.doRightClick();
 
 		if (canRightClick()) {
 			goingDown = true;

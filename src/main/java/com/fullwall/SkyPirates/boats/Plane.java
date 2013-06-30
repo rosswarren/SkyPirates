@@ -30,8 +30,8 @@ public final class Plane extends BoatHandler {
 	}
 	
 	@Override
-	public void doRightClick(SkyPirates plugin) {
-		super.doRightClick(plugin);
+	public void doRightClick() {
+		super.doRightClick();
 		
 		Player p = getPlayer();
 		

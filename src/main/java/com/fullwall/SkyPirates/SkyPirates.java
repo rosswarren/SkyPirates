@@ -1,10 +1,8 @@
 package com.fullwall.SkyPirates;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
+import com.fullwall.SkyPirates.command.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
@@ -17,20 +15,30 @@ import org.bukkit.entity.Player;
 import com.fullwall.SkyPirates.boats.*;
 
 public class SkyPirates extends JavaPlugin {
-	private HashMap<Integer, BoatHandler> boats = new HashMap<Integer, BoatHandler>();
-	private Boolean destroyBoatsOnExit;
+    private Boats boats;
 
 	public static Logger log = Logger.getLogger("Minecraft");
 
     private MessageHandler messageHandler;
 
+    private CommandHandler commandHandler;
+
+    public SkyPirates() {
+        commandHandler = new ClearCommandHandler(
+                new HelpCommandHandler(
+                        new PlaneCommandHandler(
+                                new SubmarineCommandHandler(
+                                        new HovercraftCommandHandler(
+                                                new GliderCommandHandler(
+                                                        new DrillCommandHandler(
+                                                                new IcebreakerCommandHandler(
+                                                                        new DefaultCommandHandler(
+                                                                                new NonMatchedCommandHandler(null))))))))));
+    }
+
 	@Override
 	public void onLoad() {
 
-	}
-	
-	public Boolean getDestroyBoatsOnExit() {
-		return this.destroyBoatsOnExit;
 	}
 
 	@Override
@@ -38,7 +46,7 @@ public class SkyPirates extends JavaPlugin {
 		PluginManager pluginManager = getServer().getPluginManager();
 		
 		// register listeners so that they can handle events
-		pluginManager.registerEvents(new EventListener(this), this);
+		pluginManager.registerEvents(new EventListener(boats, messageHandler), this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		
@@ -58,10 +66,6 @@ public class SkyPirates extends JavaPlugin {
 
         messageHandler = new MessageHandler(getConfig());
 	}
-
-    public MessageHandler getMessageHandler() {
-        return messageHandler;
-    }
 
 	@Override
 	public void onDisable() {
@@ -94,132 +98,13 @@ public class SkyPirates extends JavaPlugin {
 		if (!commandName.equals("skypirates") && !commandName.equals("sky") && !commandName.equals("skypi")) {
 			return true;
 		}
-		
-		if (option.equals("clear") || option.equals("c")) {
-			if (player.hasPermission("skypirates.admin.clear")) {
-				if (this.boats.isEmpty()) {
-                    messageHandler.sendMessage(player, Messages.NO_BOATS);
-					return true;
-				}
 
-				for (Map.Entry<Integer, BoatHandler> entry : boats.entrySet()) {
-					BoatHandler boatHandler = entry.getValue();
-					
-					if (boatHandler.boat.isEmpty()) {
-						boatHandler.boat.getWorld().getEntities().remove(entry.getValue());
-						boats.remove(entry.getKey());
-					}
-				}
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-				return true;
-			}
-			
-			return true;
-		} else if (option.equals("help")) {
-			if (!player.hasPermission("skypirates.player.help")) {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-				return true;
-			}
+        commandHandler.run(option, player, boats, messageHandler);
 
-            messageHandler.sendMessage(player, Messages.HELP);
-			return true;
-		}
-		
-		
-		if (!player.isInsideVehicle()) {
-            messageHandler.sendMessage(player, Messages.NOT_IN_BOAT);
-			return true;
-		}
-		
-		if (!(player.getVehicle() instanceof Boat)) {
-            messageHandler.sendMessage(player, Messages.NOT_IN_BOAT);
-			return true;
-		}
-		
-		int id = player.getVehicle().getEntityId();
-		
-		if (option.equals("p") || option.equals("plane")) {
-			if (player.hasPermission("skypirates.modes.plane")) {
-                messageHandler.sendMessage(player, Messages.PLANE);
-				
-				Plane handler = new Plane((Boat) player.getVehicle());
-				this.setBoat(id, handler);
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-			}
-		} else if (option.equals("s") || option.contains("sub")) {
-			if (player.hasPermission("skypirates.modes.submarine")) {
-                messageHandler.sendMessage(player, Messages.SUBMARINE);
-				
-				Submarine handler = new Submarine((Boat) player.getVehicle());
-				this.setBoat(id, handler);
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-			}
-		} else if (option.contains("hover") || option.equals("h")) {
-			if (player.hasPermission("skypirates.modes.hoverboat")) {
-                messageHandler.sendMessage(player, Messages.HOVER);
-				
-				Hovercraft handler = new Hovercraft((Boat) player.getVehicle());
-				this.setBoat(id, handler);
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-			}
-		} else if (option.contains("glider") || option.equals("g")) {
-			if (player.hasPermission("skypirates.modes.glider")) {
-                messageHandler.sendMessage(player, Messages.GLIDER);
-				
-				Glider handler = new Glider((Boat) player.getVehicle());
-				this.setBoat(id, handler);
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-			}
-		} else if (option.contains("drill") || option.equals("d")) {
-			if (player.hasPermission("skypirates.modes.drill")) {
-                messageHandler.sendMessage(player, Messages.DRILL);
-				
-				Drill handler = new Drill((Boat) player.getVehicle());
-				this.setBoat(id, handler);
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-			}
-		} else if (option.contains("ice") || option.equals("i")) {
-			if (player.hasPermission("skypirates.modes.icebreaker")) {
-                messageHandler.sendMessage(player, Messages.ICEBREAKER);
-				
-				Icebreaker handler = new Icebreaker((Boat) player.getVehicle());
-				this.setBoat(id, handler);
-			} else {
-                messageHandler.sendMessage(player, Messages.NO_PERMISSION);
-			}
-		} else {
-            messageHandler.sendMessage(player, Messages.NORMAL);
-			
-			Normal handler = new Normal((Boat) player.getVehicle());
-			this.setBoat(id, handler);
-		}
-		
-		return false;
-	}
-	
-	public BoatHandler getBoatHandler(int id) {
-		return boats.get(id);
-	}
-	
-	public void setBoat(int id, BoatHandler handler) {
-		boats.put(id, handler);
-	}
-	
-	public void removeBoatHandler(int id) {
-		boats.remove(id);
+        return true;
 	}
 
     private void loadConfiguration() {
         MemorySection optionsSection = (MemorySection) getConfig().get("options");
-
-        String answer = optionsSection.getString("destroy-boat-on-exit");
-
-        this.destroyBoatsOnExit = answer.contains("t");
     }
 }

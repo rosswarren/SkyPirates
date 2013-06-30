@@ -65,6 +65,9 @@ public class MessageHandler {
             case EXIT:
                 text = ChatColor.LIGHT_PURPLE + strings.get("exit");
                 break;
+            case COMMAND_NOT_AVAILABLE:
+                text = ChatColor.RED + strings.get("command-not-available");
+                break;
             case HELP:
                 p.sendMessage(ChatColor.AQUA + "SkyPirates Modes List");
                 p.sendMessage(ChatColor.YELLOW + "---------------------");

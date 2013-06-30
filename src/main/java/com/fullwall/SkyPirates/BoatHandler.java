@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public abstract class BoatHandler {
@@ -20,7 +19,8 @@ public abstract class BoatHandler {
 	
 	protected long delay = 0;
 
-	private final double maxMomentum = 10D;
+    private static double MAX_MOMENTUM = 10D;
+
 	public double fromYaw = 0D;
 	public double toYaw = 0D;
 	protected int hoverHeight = 0;
@@ -45,6 +45,10 @@ public abstract class BoatHandler {
 		populateHelmets();
 	}
 
+    public boolean hasPlayer() {
+        return !boat.isEmpty();
+    }
+
     protected boolean canRightClick() {
         return !cancelRightClick;
     }
@@ -53,13 +57,7 @@ public abstract class BoatHandler {
         cancelRightClick = true;
     }
 
-	public void destroy() {
-		boat.remove();
-
-		getPlayer().getInventory().addItem(new ItemStack(Material.BOAT, 1));
-	}
-
-    public Block getLocation() {
+    public Block getBlockLocation() {
         return boat.getLocation().getBlock();
     }
 
@@ -76,24 +74,12 @@ public abstract class BoatHandler {
 	}
 
 	public void setMotionY(double motionY) {
-		motionY = RangeHandler.range(motionY, maxMomentum, -maxMomentum);
+		motionY = RangeHandler.range(motionY, MAX_MOMENTUM, -MAX_MOMENTUM);
 		setMotion(boat.getVelocity().getX(), motionY, boat.getVelocity().getZ());
 	}
 
-	public int getX() {
-		return boat.getLocation().getBlockX();
-	}
-
-	public int getY() {
-		return boat.getLocation().getBlockY();
-	}
-
-	public int getZ() {
-		return boat.getLocation().getBlockZ();
-	}
-
 	public Block getBlockBeneath() {
-		return boat.getWorld().getBlockAt(getX(), getY() - 1, getZ());
+        return boat.getWorld().getBlockAt(boat.getLocation().subtract(0, 1, 0));
 	}
 	
 	public Material getMaterialInHand() {
@@ -106,10 +92,6 @@ public abstract class BoatHandler {
 
 	protected Player getPlayer() {
 		return (Player) boat.getPassenger();
-	}
-
-	public int getEntityId() {
-		return boat.getEntityId();
 	}
 
 	protected boolean isGrounded() {
@@ -165,7 +147,7 @@ public abstract class BoatHandler {
 		}
 	}
 
-	public void doRightClick(SkyPirates plugin) {
+	public void doRightClick() {
 		Player p = getPlayer();
 		
 		blockRightClick();
@@ -216,4 +198,8 @@ public abstract class BoatHandler {
 		helmets.add(Material.GOLD_HELMET);
 		helmets.add(Material.PUMPKIN);
 	}
+
+    public void removeBoatFromWorld() {
+        boat.remove();
+    }
 }
