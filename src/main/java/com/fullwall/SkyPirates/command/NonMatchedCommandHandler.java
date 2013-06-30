@@ -6,9 +6,6 @@ import com.fullwall.SkyPirates.boats.Boats;
 import org.bukkit.entity.Player;
 
 public class NonMatchedCommandHandler extends CommandHandler {
-    public NonMatchedCommandHandler(CommandHandler next) {
-        super(next);
-    }
 
     @Override
     public boolean isResponsible(String command, Player player) {

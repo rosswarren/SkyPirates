@@ -7,12 +7,8 @@ import com.fullwall.SkyPirates.boats.Plane;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 
 public class PlaneCommandHandler extends CommandHandler {
-    public PlaneCommandHandler(CommandHandler next) {
-        super(next);
-    }
 
     @Override
     public boolean isResponsible(String command, Player player) {

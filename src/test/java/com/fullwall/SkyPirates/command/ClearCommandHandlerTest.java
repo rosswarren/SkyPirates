@@ -23,7 +23,7 @@ public class ClearCommandHandlerTest {
 
     @Before
     public void setup() {
-        commandHandler = new ClearCommandHandler(null);
+        commandHandler = new ClearCommandHandler();
 
         MockitoAnnotations.initMocks(this);
     }

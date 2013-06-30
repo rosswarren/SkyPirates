@@ -1,6 +1,7 @@
 package com.fullwall.SkyPirates.boats;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Boat;
 import org.bukkit.util.Vector;
 
@@ -30,4 +31,8 @@ public final class Glider extends BoatHandler {
 		
 		setMotion(vel.getX(), vel.getY(), vel.getZ());
 	}
+
+    private Block getBlockBeneath() {
+        return boat.getWorld().getBlockAt(boat.getLocation().subtract(0, 1, 0));
+    }
 }

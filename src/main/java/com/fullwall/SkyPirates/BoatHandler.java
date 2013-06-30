@@ -1,7 +1,8 @@
 package com.fullwall.SkyPirates;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -11,6 +12,8 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import static org.bukkit.Material.*;
 
 public abstract class BoatHandler {
 	protected Boat boat;
@@ -27,7 +30,7 @@ public abstract class BoatHandler {
 	private double maxSpeed = 0.8D;
 	protected boolean goingDown;
 	protected boolean goingUp;
-	protected ArrayList<Material> helmets = new ArrayList<Material>();
+	protected List<Material> helmets;
 
 	protected final double DOWNWARD_DRIFT = -0.037999998673796664D;
 	protected final double COMPENSATION = 0.0379999999999999999999999999999999999999999999D;
@@ -42,60 +45,21 @@ public abstract class BoatHandler {
 		boat.setWorkOnLand(true);
 		cal = Calendar.getInstance();
 
-		populateHelmets();
+        helmets = Arrays.asList(LEATHER_HELMET, IRON_HELMET, DIAMOND_HELMET, GOLD_HELMET, PUMPKIN);
 	}
+
+    public abstract void movementHandler(Vector vel);
 
     public boolean hasPlayer() {
         return !boat.isEmpty();
     }
 
-    protected boolean canRightClick() {
-        return !cancelRightClick;
-    }
-
-    protected void blockRightClick() {
-        cancelRightClick = true;
-    }
-
     public Block getBlockLocation() {
         return boat.getLocation().getBlock();
     }
-
-	protected double getYaw() {
-		return boat.getLocation().getYaw();
-	}
-
-	protected void setMotion(double motionX, double motionY, double motionZ) {
-		Vector newVelocity = new Vector();
-		newVelocity.setX(motionX);
-		newVelocity.setY(motionY);
-		newVelocity.setZ(motionZ);
-		boat.setVelocity(newVelocity);
-	}
-
-	public void setMotionY(double motionY) {
-		motionY = RangeHandler.range(motionY, MAX_MOMENTUM, -MAX_MOMENTUM);
-		setMotion(boat.getVelocity().getX(), motionY, boat.getVelocity().getZ());
-	}
-
-	public Block getBlockBeneath() {
-        return boat.getWorld().getBlockAt(boat.getLocation().subtract(0, 1, 0));
-	}
 	
 	public Material getMaterialInHand() {
 		return getPlayer().getItemInHand().getType();
-	}
-	
-	protected Material getHelmetMaterial() {
-		return getPlayer().getInventory().getHelmet().getType();
-	}
-
-	protected Player getPlayer() {
-		return (Player) boat.getPassenger();
-	}
-
-	protected boolean isGrounded() {
-        return boat.isOnGround();
 	}
 
 	public void stopBoat() {
@@ -133,12 +97,10 @@ public abstract class BoatHandler {
 		this.setMotion(newX, vel.getY(), newZ);
 	}
 
-	public abstract void movementHandler(Vector vel);
-
 	public void doArmSwing() {
 		Player p = getPlayer();
 		
-		if (getMaterialInHand() == Material.COAL && p.hasPermission("skypirates.items.coal")) {
+		if (getMaterialInHand() == COAL && p.hasPermission("skypirates.items.coal")) {
 			setMotionY(0.75D);
 			delay = cal.getTimeInMillis() + 750;
 		} else {
@@ -148,18 +110,18 @@ public abstract class BoatHandler {
 	}
 
 	public void doRightClick() {
-		Player p = getPlayer();
+		Player player = getPlayer();
 		
 		blockRightClick();
 		
-		if (getMaterialInHand() == Material.DIAMOND && p.hasPermission("skypirates.items.diamond")) {
-			if (!p.isSneaking()) {
+		if (getMaterialInHand() == DIAMOND && player.hasPermission("skypirates.items.diamond")) {
+			if (!player.isSneaking()) {
 				speedUpBoat(10, boat.getVelocity());
-				p.sendMessage(ChatColor.BLUE + "Boost!");
+				player.sendMessage(ChatColor.BLUE + "Boost!");
 			}
-		} else if (getMaterialInHand() == Material.ARROW && p.hasPermission("skypirates.items.arrow")) {
-			p.launchProjectile(Arrow.class);
-		} else if (getMaterialInHand() == Material.SNOW_BLOCK && p.hasPermission("skypirates.items.snowblock")) {
+		} else if (getMaterialInHand() == ARROW && player.hasPermission("skypirates.items.arrow")) {
+			player.launchProjectile(Arrow.class);
+		} else if (getMaterialInHand() == SNOW_BLOCK && player.hasPermission("skypirates.items.snowblock")) {
 			stopBoat();
 		} else {
             allowRightClick();
@@ -187,19 +149,48 @@ public abstract class BoatHandler {
 		return delay;
 	}
 
-    private void allowRightClick() {
+    protected double getYaw() {
+        return boat.getLocation().getYaw();
+    }
+
+    protected void setMotion(double motionX, double motionY, double motionZ) {
+        Vector newVelocity = new Vector();
+        newVelocity.setX(motionX);
+        newVelocity.setY(motionY);
+        newVelocity.setZ(motionZ);
+        boat.setVelocity(newVelocity);
+    }
+
+    protected void setMotionY(double motionY) {
+        motionY = RangeHandler.range(motionY, MAX_MOMENTUM, -MAX_MOMENTUM);
+        setMotion(boat.getVelocity().getX(), motionY, boat.getVelocity().getZ());
+    }
+
+    protected Material getHelmetMaterial() {
+        return getPlayer().getInventory().getHelmet().getType();
+    }
+
+    protected Player getPlayer() {
+        return (Player) boat.getPassenger();
+    }
+
+    protected boolean isGrounded() {
+        return boat.isOnGround();
+    }
+
+    protected boolean canRightClick() {
+        return !cancelRightClick;
+    }
+
+    protected void blockRightClick() {
         cancelRightClick = true;
     }
 
-    private void populateHelmets() {
-		helmets.add(Material.LEATHER_HELMET);
-		helmets.add(Material.IRON_HELMET);
-		helmets.add(Material.DIAMOND_HELMET);
-		helmets.add(Material.GOLD_HELMET);
-		helmets.add(Material.PUMPKIN);
-	}
-
     public void removeBoatFromWorld() {
         boat.remove();
+    }
+
+    private void allowRightClick() {
+        cancelRightClick = true;
     }
 }

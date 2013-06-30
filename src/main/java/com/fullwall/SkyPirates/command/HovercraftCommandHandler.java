@@ -9,9 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class HovercraftCommandHandler extends CommandHandler {
-    public HovercraftCommandHandler(CommandHandler next) {
-        super(next);
-    }
 
     @Override
     public boolean isResponsible(String command, Player player) {

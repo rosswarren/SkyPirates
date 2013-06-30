@@ -1,15 +1,15 @@
 package com.fullwall.SkyPirates;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.fullwall.SkyPirates.command.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.MemorySection;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 
 import com.fullwall.SkyPirates.boats.*;
@@ -23,20 +23,29 @@ public class SkyPirates extends JavaPlugin {
 
     private CommandHandler commandHandler;
 
+    private ConfigurationManager configurationManager;
+
     public SkyPirates() {
-        commandHandler = new ClearCommandHandler(
-                new HelpCommandHandler(
-                        new PlaneCommandHandler(
-                                new SubmarineCommandHandler(
-                                        new HovercraftCommandHandler(
-                                                new GliderCommandHandler(
-                                                        new DrillCommandHandler(
-                                                                new IcebreakerCommandHandler(
-                                                                        new DefaultCommandHandler(
-                                                                                new NonMatchedCommandHandler(null))))))))));
+        List<CommandHandler> commandHandlers = new ArrayList<CommandHandler>(Arrays.asList(
+            new ClearCommandHandler(),
+            new HelpCommandHandler(),
+            new PlaneCommandHandler(),
+            new SubmarineCommandHandler(),
+            new HovercraftCommandHandler(),
+            new GliderCommandHandler(),
+            new DrillCommandHandler(),
+            new IcebreakerCommandHandler(),
+            new DefaultCommandHandler(),
+            new NonMatchedCommandHandler()
+        ));
+
+        chainCommandHandlers(commandHandlers);
+
+        boats = new Boats();
+        configurationManager = new ConfigurationManager(log);
     }
 
-	@Override
+    @Override
 	public void onLoad() {
 
 	}
@@ -48,29 +57,14 @@ public class SkyPirates extends JavaPlugin {
 		// register listeners so that they can handle events
 		pluginManager.registerEvents(new EventListener(boats, messageHandler), this);
 
-		PluginDescriptionFile pdfFile = this.getDescription();
-		
-		// In certain cases if you wish to append new defaults to an existing config.yml you can set the option copyDefaults to true
-		this.getConfig().options().copyDefaults(true);
-		
-		// Should copy config.yml to the users files so that they can config things
-		// http://wiki.bukkit.org/Introduction_to_the_New_Configuration
-		this.saveDefaultConfig();
-		
-		// reload the config in memory
-		this.reloadConfig();
-		
-		loadConfiguration();
-		
-		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] loaded");
+        configurationManager.init(this);
 
         messageHandler = new MessageHandler(getConfig());
 	}
 
 	@Override
 	public void onDisable() {
-		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info("[" + pdfFile.getName() + "]: version [" + pdfFile.getVersion() + "] disabled");
+		log.info("[" + configurationManager.getName() + "]: version [" + configurationManager.getVersion() + "] disabled");
 	}
 
 	@Override
@@ -104,7 +98,14 @@ public class SkyPirates extends JavaPlugin {
         return true;
 	}
 
-    private void loadConfiguration() {
-        MemorySection optionsSection = (MemorySection) getConfig().get("options");
+    private void chainCommandHandlers(List<CommandHandler> commandHandlers) {
+        commandHandler = commandHandlers.get(0);
+
+        CommandHandler lastLink = commandHandler;
+
+        for (int i = 1; i < commandHandlers.size(); i++) {
+            lastLink.setNext(commandHandlers.get(i));
+            lastLink = commandHandlers.get(i);
+        }
     }
 }

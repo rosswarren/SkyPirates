@@ -8,13 +8,14 @@ import org.bukkit.entity.Player;
 public abstract class CommandHandler {
     private CommandHandler next;
 
-    public CommandHandler(CommandHandler next) {
-        this.next = next;
-    }
 
     public abstract boolean isResponsible(String command, Player player);
 
     public abstract void handle(Player player, Boats boats, MessageHandler messageHandler);
+
+    public void setNext(CommandHandler commandHandler) {
+        this.next = commandHandler;
+    }
 
     public void run(String command, Player player, Boats boats, MessageHandler messageHandler) {
         if (isResponsible(command, player)) {

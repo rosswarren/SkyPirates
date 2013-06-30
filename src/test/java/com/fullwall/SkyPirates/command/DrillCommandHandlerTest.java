@@ -5,7 +5,6 @@ import com.fullwall.SkyPirates.Messages;
 import com.fullwall.SkyPirates.boats.Boats;
 import com.fullwall.SkyPirates.boats.Drill;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class DrillCommandHandlerTest {
 
     @Before
     public void setup() {
-        commandHandler = new DrillCommandHandler(null);
+        commandHandler = new DrillCommandHandler();
 
         MockitoAnnotations.initMocks(this);
     }

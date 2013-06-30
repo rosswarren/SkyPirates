@@ -35,7 +35,7 @@ public class EventListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerKick(PlayerKickEvent event){
+	public void onPlayerKick(PlayerKickEvent event) {
 		if (event.getReason().equals("You moved too quickly :( (Hacking?)")) {
 			event.setCancelled(true);
 		}
@@ -53,21 +53,15 @@ public class EventListener implements Listener {
 				&& p.getVehicle() instanceof Boat
 				&& boats.contains(p.getVehicle())) {
 
-
 			BoatHandler boatHandler = boats.getHandler(p.getVehicle());
 
 			if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				doSneakOrRightClick(boatHandler);
+                boatHandler.doRightClick();
 			} else if (boatHandler.getDelay() == 0) {
 				boatHandler.doArmSwing();
 			}
 		}
 	}
-	
-	private void doSneakOrRightClick(BoatHandler boatHandler) {
-		boatHandler.doRightClick();
-	}
-	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
@@ -78,7 +72,8 @@ public class EventListener implements Listener {
                 && boats.contains(p.getVehicle())) {
 			
 			BoatHandler boatHandler = boats.getHandler(p.getVehicle());
-			doSneakOrRightClick(boatHandler);
+
+            boatHandler.doRightClick();
 		}
 	}
 	

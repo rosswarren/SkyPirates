@@ -9,10 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class DefaultCommandHandler extends CommandHandler {
-    public DefaultCommandHandler(CommandHandler next) {
-        super(next);
-    }
-
     @Override
     public boolean isResponsible(String command, Player player) {
         return playerInBoat(player);

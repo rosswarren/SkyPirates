@@ -9,10 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class DrillCommandHandler extends CommandHandler {
-    public DrillCommandHandler(CommandHandler next) {
-        super(next);
-    }
-
     @Override
     public boolean isResponsible(String command, Player player) {
         return (command.contains("drill") || command.equals("d"))
